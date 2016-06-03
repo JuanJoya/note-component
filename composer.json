@@ -1,0 +1,22 @@
+{
+    "name": "juanjoya/note-component-test",
+    "description": "App de notas utilizando algunos componentes internos de laravel.",
+    "type": "Project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Juan David Joya Ortiz",
+            "email": "ing.juanjoya@outlook.com"
+        }
+    ],
+    "require": {
+        "illuminate/http": "5.1.*",
+        "illuminate/view": "5.1.*",
+        "illuminate/routing": "5.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Note\\": "app/"
+        }
+    }
+}

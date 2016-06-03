@@ -1,0 +1,29 @@
+body
+{
+    padding-top: 50px;
+}
+
+.author
+{
+    float: right;
+    margin-right: 5px;
+}
+
+textarea
+{
+    resize: vertical;
+}
+
+footer
+{
+    padding-top: 64px;
+    text-align: center;
+}
+
+.logo
+{
+    padding: 5px 10px 0 0;
+    font-size: 36px;
+    float:left;
+    color:deepskyblue;
+}
