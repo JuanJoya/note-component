@@ -3,36 +3,22 @@
 namespace Note\Domain;
 use Note\Infrastructure\AuthorRepository;
 
-class AuthorService
+class AuthorService extends Service
 {
-    /**
-     * @var AuthorRepository
-     */
-    private $authors;
-
     /**
      * @param AuthorRepository $authors
      */
     public function __construct(AuthorRepository $authors)
     {
-        $this->authors = $authors;
-    }
-
-    /**
-     * @param $id
-     * @return Author
-     */
-    public function find($id)
-    {
-        return $this->authors->findAuthor($id);
+        parent::__construct($authors);
     }
 
     /**
      * @param $userId
-     * @return \Illuminate\Support\Collection
+     * @return mixed
      */
-    public function listAuthors($userId)
+    public function authors($userId)
     {
-        return $this->authors->listUserAuthors($userId);
+        return $this->entity->authors($userId);
     }
 }

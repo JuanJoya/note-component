@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <title>Note App</title>
+    <title>Note/update</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
           integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7"
           crossorigin="anonymous">
@@ -25,44 +25,42 @@
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <li class="active"><a href="/">List</a></li>
+                <li><a href="/">List</a></li>
                 <li><a href="/create">Create</a></li>
-                <li><a href="/find">Find / Edit / Delete </a>
+                <li class="active"><a href="/find">Find / Edit / Delete</a>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
 </nav>
 
 <div class="container">
+    <div class="page-header">
+        <h3>Update a Note</h3>
+    </div>
+    <div class="alert alert-warning" role="alert">
+        <strong>Please</strong> update the form below.
+    </div>
 
-    <div class="page-header">
-        <h1>Note Component App</h1>
-    </div>
-    <div class="well">
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas sed diam eget risus varius blandit sit amet non magna. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cras mattis consectetur purus sit amet fermentum. Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Aenean lacinia bibendum nulla sed consectetur.</p>
-    </div>
-    <p><a class="btn btn-lg btn-success" href="/create" role="button">Create a note</a></p>
-    <div class="page-header">
-        <h3>List Notes</h3>
-    </div>
-    <?php foreach($notes as $note):?>
-        <div class="panel panel-success">
-            <div class="panel-heading">
-                <h3 class="panel-title">
-                    <?= $note->getTitle()?>
-                    <span class="label label-success author">
-                        by <?=$note->getAuthor()?>
-                    </span>
-                    <span class="label label-info author">
-                        <?=$note->getAuthorName()?>
-                    </span>
-                </h3>
-            </div>
-            <div class="panel-body">
-                <?= $note->getContent()?>
-            </div>
+    <form action="/update" method="post">
+        <div class="form-group">
+            <label>Note Title</label>
+            <input type="text" name="note-title" class="form-control" value="<?=$note->getTitle()?>" placeholder="Title" required>
         </div>
-    <?php endforeach ?>
+        <div class="form-group">
+            <label>Note Content</label>
+            <textarea class="form-control" name="note-content" maxlength="100"  placeholder="content" required><?= $note->getContent()?></textarea>
+        </div>
+        <div class="form-group">
+            <label>User</label>
+            <input class="form-control"  type="text" value="<?= $note->getAuthorName()?>" readonly>
+            <input hidden type="text" name="note-id" value="<?= $note->getId()?>">
+        </div>
+        <div class="form-group">
+            <label>Author</label>
+            <input class="form-control"  type="text" value="<?= $note->getAuthor()?>" readonly>
+        </div>
+        <button type="submit" class="btn btn-danger btn-block">Save</button>
+    </form>
 
 </div><!-- /.container -->
 

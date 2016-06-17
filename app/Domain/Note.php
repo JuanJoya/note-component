@@ -10,22 +10,30 @@ class Note
     private $author;
     private $title;
     private $content;
+    private $id;
 
-    public function __construct($author, $title, $content)
+    public function __construct($author, $title, $content, $id = null)
     {
         $this->setAuthor($author);
         $this->title = $title;
         $this->content = $content;
+        $this->id = $id;
     }
 
     public function setAuthor($author)
     {
         if(!$author instanceof Author)
         {
-            throw new \InvalidArgumentException("This isn't a author");
+            throw new \InvalidArgumentException("This isn't an author");
         }
         $this->author = $author;
     }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
     public function getTitle()
     {
         return $this->title;

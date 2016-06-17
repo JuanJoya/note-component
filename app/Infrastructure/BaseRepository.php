@@ -29,10 +29,17 @@ abstract class BaseRepository extends Database
 
     public function find($id)
     {
-        $this->query = "SELECT * FROM '.$this->table().' WHERE id = :id";
+        $this->query = "SELECT * FROM ".$this->table()." WHERE id = :id";
         $this->bindParams = [':id' => $id];
         $this->getResultsFromQuery();
 
         return $this->mapEntity(array_shift($this->rows));
+    }
+
+    public function delete($id)
+    {
+        $this->query = "DELETE FROM ".$this->table()." WHERE id = :id";
+        $this->bindParams = [':id' => $id];
+        $this->executeSingleQuery();
     }
 }

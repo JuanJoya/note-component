@@ -26,7 +26,7 @@ class AuthorRepository extends BaseRepository
         return $this->mapEntity(array_shift($this->rows));
     }
 
-    public function listUserAuthors($userId)
+    public function authors($userId)
     {
         $this->query = "SELECT * FROM authors WHERE user_id = :userId";
         $this->bindParams = [':userId' => $userId];

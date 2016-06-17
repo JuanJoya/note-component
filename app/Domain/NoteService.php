@@ -3,31 +3,32 @@
 namespace Note\Domain;
 use Note\Infrastructure\NoteRepository;
 
-class NoteService
+class NoteService extends Service
 {
-    /**
-     * @var NoteRepository
-     */
-    private $notes;
-
     /**
      * @param NoteRepository $notes
      */
     public function __construct(NoteRepository $notes)
     {
-        $this->notes = $notes;
+        parent::__construct($notes);
+    }
+
+    public function save(array $params)
+    {
+        $this->entity->save($params);
+    }
+
+    public function update(array $params)
+    {
+        $this->entity->update($params);
     }
 
     /**
+     * @param $authorId
      * @return \Illuminate\Support\Collection
      */
-    public function listNotes()
+    public function notes($authorId)
     {
-        return $this->notes->all();
-    }
-
-    public function saveNote(array $params)
-    {
-        $this->notes->save($params);
+        return $this->entity->notes($authorId);
     }
 }

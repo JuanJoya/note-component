@@ -27,8 +27,7 @@
             <ul class="nav navbar-nav">
                 <li><a href="/">List</a></li>
                 <li class="active"><a href="/create">Create</a></li>
-                <li><a href="#">Edit</a>
-                <li><a href="#">Delete</a></li>
+                <li><a href="/find">Find / Edit / Delete</a>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

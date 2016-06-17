@@ -18,7 +18,7 @@ error_reporting(E_ALL);
  */
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', realpath( __DIR__ ).DS);
-define('URL', "http://localhost/proyectos/Note%20Component/public");
+define('URL', "http://localhost/proyectos/note-component/public");
 
 /**
  * llama el autoload de composer bajo el estándar psr-4

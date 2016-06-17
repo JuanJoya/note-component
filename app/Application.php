@@ -27,6 +27,11 @@ class Application
         $router->get('/', HomeController::class . '@index');
         $router->get('/create', HomeController::class . '@create');
         $router->post('/create', HomeController::class . '@store');
+        $router->get('/find', HomeController::class . '@find');
+        $router->post('/find', HomeController::class . '@show');
+        $router->get('/update/{id}', HomeController::class . '@update');
+        $router->post('/update', HomeController::class . '@save');
+        $router->get('/delete/{id}', HomeController::class . '@delete');
 
         $response = $router->dispatch(Request::capture());
 

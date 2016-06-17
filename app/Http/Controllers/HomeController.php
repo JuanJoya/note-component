@@ -1,7 +1,6 @@
 <?php
 namespace Note\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Note\Domain\AuthorService;
 use Note\Domain\NoteService;
 use Note\Domain\UserService;
@@ -17,7 +16,9 @@ class HomeController
      * @var UserService
      */
     private $userService;
-
+    /**
+     * @var AuthorService
+     */
     private $authorService;
 
     /**
@@ -34,7 +35,7 @@ class HomeController
 
     public function index()
     {
-        $notes = $this->noteService->listNotes();
+        $notes = $this->noteService->all();
 
         $view = new View('home', [
             'notes' => $notes,
@@ -50,7 +51,7 @@ class HomeController
          */
         $defaultUser = $this->userService->find('1');
 
-        $authors = $this->authorService->listAuthors($defaultUser->getId());
+        $authors = $this->authorService->authors($defaultUser->getId());
 
         $view = new View('create', [
             'user' => $defaultUser,
@@ -70,10 +71,68 @@ class HomeController
             $params['title'] = $_POST['note-title'];
             $params['content'] = $_POST['note-content'];
             $params['author_id'] = $_POST['note-author-id'];
-            $this->noteService->saveNote($params);
+            $this->noteService->save($params);
         }
 
         return $this->index();
     }
 
+    public function find()
+    {
+        $defaultUser = $this->userService->find('1');
+        $authors = $this->authorService->authors($defaultUser->getId());
+        $view = new View('find', [
+            'user' => $defaultUser,
+            'authors' => $authors
+        ]);
+        return $view->render();
+    }
+
+    public function show()
+    {
+        if($_POST)
+        {
+            $authorId = $_POST['note-author-id'];
+            $notes = $this->noteService->notes($authorId);
+
+            $view = new View('show', [
+                'notes' => $notes
+            ]);
+
+            return $view->render();
+        }
+    }
+
+    public function update($id)
+    {
+        $note = $this->noteService->find($id);
+
+        $view = new View('update', [
+            'note' => $note
+        ]);
+
+        return $view->render();
+    }
+
+    public function save()
+    {
+        if($_POST)
+        {
+            $params['title'] = $_POST['note-title'];
+            $params['content'] = $_POST['note-content'];
+            $params['id'] = $_POST['note-id'];
+            $this->noteService->update($params);
+        }
+        return $this->index();
+    }
+
+    public function delete($id)
+    {
+        /**
+         * Validar credenciales de User
+         */
+        $this->noteService->delete($id);
+
+        return $this->index();
+    }
 }
