@@ -6,7 +6,7 @@ use Note\Infrastructure\BaseRepository;
 abstract class Service
 {
     /**
-     * @var BaseRepository
+     * @var BaseRepository instancia de algún repositorio {Note,Author,User}
      */
     protected $entity;
 
@@ -23,7 +23,7 @@ abstract class Service
     }
 
     /**
-     * @param $id string
+     * @param string $id
      * @return mixed Entity Object
      */
     public function find($id)
@@ -40,10 +40,10 @@ abstract class Service
     }
 
     /**
-     * @param $id string
+     * @param string $id id de una Entity
      */
     public function delete($id)
     {
-        return $this->entity->delete($id);
+        $this->entity->delete($id);
     }
 }

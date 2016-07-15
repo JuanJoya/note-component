@@ -6,7 +6,7 @@ use Note\Infrastructure\AuthorRepository;
 class AuthorService extends Service
 {
     /**
-     * @param AuthorRepository $authors
+     * @param AuthorRepository $authors instancia del repositorio de Author
      */
     public function __construct(AuthorRepository $authors)
     {
@@ -14,8 +14,8 @@ class AuthorService extends Service
     }
 
     /**
-     * @param $userId
-     * @return mixed
+     * @param string $userId id del usuario
+     * @return \Illuminate\Support\Collection de Author
      */
     public function authors($userId)
     {

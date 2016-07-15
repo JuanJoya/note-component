@@ -28,6 +28,7 @@
                 <li><a href="/">List</a></li>
                 <li class="active"><a href="/create">Create</a></li>
                 <li><a href="/find">Find / Edit / Delete</a>
+                <li><a href="/search">Search</a>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -58,9 +59,16 @@
         <div class="form-group">
             <label>Select Author</label>
             <select name="note-author-id" multiple class="form-control" required>
-                <?php foreach($authors as $author):?>
-                    <option value="<?= $author->getAuthorId() ?>"><?= $author->getUsername() ?></option>
-                <?php endforeach ?>
+                <?php /**
+                 * @type \Illuminate\Support\Collection $authors
+                 * @type Note\Domain\Author $author
+                 */
+                    foreach($authors as $author):
+                ?>
+                        <option value="<?= $author->getAuthorId() ?>"><?= $author->getUsername() ?></option>
+                <?php
+                    endforeach;
+                ?>
             </select>
         </div>
         <button type="submit" class="btn btn-success btn-block">Create</button>

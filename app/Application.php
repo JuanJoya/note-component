@@ -9,6 +9,9 @@ use Note\Http\Controllers\HomeController;
 
 class Application
 {
+    /**
+     * @var Container de Laravel para inyección de dependencias
+     */
     private $container;
 
     public function __construct(Container $container)
@@ -16,6 +19,9 @@ class Application
         $this->container = $container;
     }
 
+    /**
+     * Routes de la aplicación
+     */
     public function run()
     {
         $router = new Router(
@@ -32,6 +38,8 @@ class Application
         $router->get('/update/{id}', HomeController::class . '@update');
         $router->post('/update', HomeController::class . '@save');
         $router->get('/delete/{id}', HomeController::class . '@delete');
+        $router->get('/search', HomeController::class . '@search');
+        $router->post('/search', HomeController::class . '@check');
 
         $response = $router->dispatch(Request::capture());
 

@@ -28,6 +28,7 @@
                 <li><a href="/">List</a></li>
                 <li><a href="/create">Create</a></li>
                 <li class="active"><a href="/find">Find / Edit / Delete</a>
+                <li><a href="/search">Search</a>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -40,11 +41,11 @@
     <div class="alert alert-warning" role="alert">
         <strong>Please</strong> update the form below.
     </div>
-
+    <?php /**@type Note\Domain\Note $note**/?>
     <form action="/update" method="post">
         <div class="form-group">
             <label>Note Title</label>
-            <input type="text" name="note-title" class="form-control" value="<?=$note->getTitle()?>" placeholder="Title" required>
+            <input type="text" name="note-title" class="form-control" value="<?= $note->getTitle() ?>" placeholder="Title" required>
         </div>
         <div class="form-group">
             <label>Note Content</label>

@@ -28,6 +28,7 @@
                 <li class="active"><a href="/">List</a></li>
                 <li><a href="/create">Create</a></li>
                 <li><a href="/find">Find / Edit / Delete </a>
+                <li><a href="/search">Search</a>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -45,7 +46,18 @@
     <div class="page-header">
         <h3>List Notes</h3>
     </div>
-    <?php foreach($notes as $note):?>
+    <?php /**
+     * @type \Illuminate\Support\Collection $notes
+     */
+        if(empty($notes->all())):
+    ?>
+            <div class="alert alert-danger" role="alert">
+                <strong>Oops</strong> notes not found.
+            </div>
+    <?php
+        else:
+        foreach($notes as $note):
+    ?>
         <div class="panel panel-success">
             <div class="panel-heading">
                 <h3 class="panel-title">
@@ -62,7 +74,10 @@
                 <?= $note->getContent()?>
             </div>
         </div>
-    <?php endforeach ?>
+    <?php
+        endforeach;
+        endif;
+    ?>
 
 </div><!-- /.container -->
 

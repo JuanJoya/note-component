@@ -28,6 +28,7 @@
                 <li><a href="/">List</a></li>
                 <li><a href="/create">Create</a></li>
                 <li class="active"><a href="/find">Find / Edit / Delete</a>
+                <li><a href="/search">Search</a>
             </ul>
         </div><!--/.nav-collapse -->
     </div>
@@ -73,7 +74,7 @@
                 <?= $note->getContent()?>
             </div>
         </div>
-    <?php endforeach ?>
+    <?php endforeach; ?>
 
 </div><!-- /.container -->
 

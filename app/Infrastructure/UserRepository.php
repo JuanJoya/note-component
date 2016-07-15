@@ -5,11 +5,18 @@ use Note\Domain\User;
 
 class UserRepository extends BaseRepository
 {
+    /**
+     * @return string
+     */
     protected function table()
     {
         return 'users';
     }
 
+    /**
+     * @param string $userId
+     * @return User
+     */
     public function findUser($userId)
     {
         $this->query = "SELECT * FROM users WHERE id = :userId";
@@ -19,6 +26,10 @@ class UserRepository extends BaseRepository
         return $this->mapEntity(array_shift($this->rows));
     }
 
+    /**
+     * @param array $result
+     * @return User
+     */
     protected function mapEntity(array $result)
     {
         $user = new User(

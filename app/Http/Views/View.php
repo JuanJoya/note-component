@@ -5,9 +5,19 @@ use Illuminate\Http\Response;
 
 class View
 {
+    /**
+     * @var string nombre del template
+     */
     private $template;
+    /**
+     * @var array parámetros a enviar al template
+     */
     private $params;
 
+    /**
+     * @param string $template
+     * @param array $params
+     */
     public function __construct($template, array $params = [])
     {
         $this->template = $template;
@@ -15,7 +25,7 @@ class View
     }
 
     /**
-     * @return Response
+     * @return Response utilizado por el Router en Request::capture()
      */
     public function render()
     {
@@ -24,6 +34,9 @@ class View
         return $response;
     }
 
+    /**
+     * @return string contenido html
+     */
     private function loadTemplate()
     {
         $path = dirname(dirname(dirname(__DIR__))) .
@@ -37,6 +50,11 @@ class View
         );
     }
 
+    /**
+     * @param string $path
+     * @param array $params
+     * @return string contenido html
+     */
     private function includeTemplateFromFile($path, $params)
     {
         if (file_exists($path)) {
