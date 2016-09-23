@@ -40,8 +40,7 @@ class Note
      */
     public function setAuthor($author)
     {
-        if(!$author instanceof Author)
-        {
+        if(!$author instanceof Author) {
             throw new \InvalidArgumentException("This isn't an author");
         }
         $this->author = $author;

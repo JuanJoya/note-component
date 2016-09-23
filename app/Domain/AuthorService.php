@@ -6,11 +6,11 @@ use Note\Infrastructure\AuthorRepository;
 class AuthorService extends Service
 {
     /**
-     * @param AuthorRepository $authors instancia del repositorio de Author
+     * @param AuthorRepository $author instancia del repositorio de Author
      */
-    public function __construct(AuthorRepository $authors)
+    public function __construct(AuthorRepository $author)
     {
-        parent::__construct($authors);
+        parent::__construct($author);
     }
 
     /**

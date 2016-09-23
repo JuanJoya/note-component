@@ -62,7 +62,7 @@ class NoteRepository extends BaseRepository
     }
 
     /**
-     * @param string $query parámetro de búsqueda en title o content
+     * @param string $query parÃ¡metro de bÃºsqueda en title o content
      * @return \Illuminate\Support\Collection
      */
     public function search($query)
@@ -94,8 +94,8 @@ class NoteRepository extends BaseRepository
      */
     protected function mapEntity(array $result)
     {
-        $author = $this->authorRepository->findAuthor($result['author_id']);
-
+        $author = $this->authorRepository->find($result['author_id']);
+        
         return new Note(
             $author,
             $result['title'],

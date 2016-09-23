@@ -51,8 +51,7 @@ abstract class Database
 	 */
 	private function openConnection()
 	{
-		if(!self::$conn)
-		{
+		if(!self::$conn) {
 			self::$conn = new \PDO(
 				self::$dbDriver.':host='.self::$dbHost.';dbname='.$this->dbName.';charset=utf8;',
 				self::$dbUser,
@@ -69,8 +68,7 @@ abstract class Database
 	private function dbQuery()
 	{
 		$result = self::$conn->prepare($this->query);
-		foreach ($this->bindParams as $key => &$param)
-		{
+		foreach ($this->bindParams as $key => &$param) {
 			$result->bindParam($key, $param);
 		}
 		$result->execute();

@@ -1,4 +1,5 @@
 <?php
+
 namespace Note\Http\Views;
 
 use Illuminate\Http\Response;
@@ -10,7 +11,7 @@ class View
      */
     private $template;
     /**
-     * @var array parámetros a enviar al template
+     * @var array parÃ¡metros a enviar al template
      */
     private $params;
 
@@ -31,6 +32,7 @@ class View
     {
         $content = $this->loadTemplate();
         $response = new Response($content);
+
         return $response;
     }
 
@@ -39,15 +41,10 @@ class View
      */
     private function loadTemplate()
     {
-        $path = dirname(dirname(dirname(__DIR__))) .
-            '/resources/views';
-
+        $path = dirname(dirname(dirname(__DIR__))) . '/resources/views';
         $templatePath = "$path/{$this->template}.php";
 
-        return $this->includeTemplateFromFile(
-            $templatePath,
-            $this->params
-        );
+        return $this->includeTemplateFromFile($templatePath, $this->params);
     }
 
     /**
@@ -59,9 +56,7 @@ class View
     {
         if (file_exists($path)) {
             extract($params);
-
             ob_start();
-
             require $path;
 
             return ob_get_clean();

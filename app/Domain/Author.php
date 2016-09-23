@@ -1,10 +1,11 @@
 <?php
+
 namespace Note\Domain;
 
 class Author extends User
 {
     /**
-     * @var string seudónimo de un Author
+     * @var string seudÃ³nimo de un Author
      */
     protected $username;
     /**
@@ -14,7 +15,7 @@ class Author extends User
 
     /**
      * @param string $email correo del User
-     * @param string $password contraseña del User
+     * @param string $password contraseÃ±a del User
      * @param string $username
      * @param null|string $authorId
      */
@@ -30,8 +31,7 @@ class Author extends User
      */
     public function setUsername($username)
     {
-        if(empty($username))
-        {
+        if(empty($username)) {
             throw new \InvalidArgumentException("Empty UserName");
         }
         $this->username = $username;

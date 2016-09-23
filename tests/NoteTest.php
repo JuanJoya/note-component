@@ -1,4 +1,5 @@
 <?php
+
 use Note\Domain\Author;
 use Note\Domain\Note;
 

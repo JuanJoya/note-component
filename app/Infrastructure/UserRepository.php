@@ -14,19 +14,6 @@ class UserRepository extends BaseRepository
     }
 
     /**
-     * @param string $userId
-     * @return User
-     */
-    public function findUser($userId)
-    {
-        $this->query = "SELECT * FROM users WHERE id = :userId";
-        $this->bindParams = [':userId' => $userId];
-        $this->getResultsFromQuery();
-
-        return $this->mapEntity(array_shift($this->rows));
-    }
-
-    /**
      * @param array $result
      * @return User
      */

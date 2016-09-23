@@ -1,4 +1,5 @@
 <?php
+
 namespace Note;
 
 use Illuminate\Contracts\Container\Container;
@@ -10,7 +11,7 @@ use Note\Http\Controllers\HomeController;
 class Application
 {
     /**
-     * @var Container de Laravel para inyección de dependencias
+     * @var Container de Laravel para inyecciÃ³n de dependencias
      */
     private $container;
 
@@ -20,7 +21,7 @@ class Application
     }
 
     /**
-     * Routes de la aplicación
+     * Routes de la aplicaciÃ³n
      */
     public function run()
     {

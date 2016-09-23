@@ -6,7 +6,7 @@ use Note\Infrastructure\BaseRepository;
 abstract class Service
 {
     /**
-     * @var BaseRepository instancia de algún repositorio {Note,Author,User}
+     * @var BaseRepository instancia de algÃºn repositorio {Note,Author,User}
      */
     protected $entity;
 
@@ -15,8 +15,7 @@ abstract class Service
      */
     public function __construct($entity)
     {
-        if(! $entity instanceof BaseRepository)
-        {
+        if(! $entity instanceof BaseRepository) {
             throw new \OutOfBoundsException();
         }
         $this->entity = $entity;

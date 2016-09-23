@@ -27,19 +27,6 @@ class AuthorRepository extends BaseRepository
     }
 
     /**
-     * @param string $authorId
-     * @return Author instancia de Entity Author
-     */
-    public function findAuthor($authorId)
-    {
-        $this->query = "SELECT * FROM authors WHERE id = :authorId";
-        $this->bindParams = [':authorId' => $authorId];
-        $this->getResultsFromQuery();
-
-        return $this->mapEntity(array_shift($this->rows));
-    }
-
-    /**
      * @param string $userId
      * @return \Illuminate\Support\Collection de Author
      */
@@ -58,7 +45,7 @@ class AuthorRepository extends BaseRepository
      */
     protected function mapEntity(array $result)
     {
-        $user = $this->userRepository->findUser($result['user_id']);
+        $user = $this->userRepository->find($result['user_id']);
 
         $author = new Author(
             $user->getEmail(),
@@ -67,7 +54,7 @@ class AuthorRepository extends BaseRepository
             $result['id']
         );
 
-        $author->setName($user->getFirstName(),$user->getLastName());
+        $author->setName($user->getFirstName(), $user->getLastName());
 
         return $author;
     }

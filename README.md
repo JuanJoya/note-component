@@ -2,7 +2,7 @@
 
 Para generar el proyecto:
 ````
-Composer install
+composer install
 ````
 Para correr los tests
 ````
@@ -16,4 +16,8 @@ Para correr el server
 ````
 php -S localhost:8000 public\index.php
 ````
-
+Parámetros de configuración:
+````
+URL - constante en public/index.php
+variables de conexión con la DB en app/Infrastructure/Database
+````

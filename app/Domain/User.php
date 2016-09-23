@@ -42,8 +42,7 @@ class User
      */
     public function setEmail($email)
     {
-        if (! filter_var($email, FILTER_VALIDATE_EMAIL))
-        {
+        if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException(
                 "Invalid email address: [$email]"
             );
@@ -56,8 +55,7 @@ class User
      */
     public function setPassword($pass)
     {
-        if(empty($pass))
-        {
+        if(empty($pass)) {
             throw new \InvalidArgumentException(
                 "Empty password"
             );

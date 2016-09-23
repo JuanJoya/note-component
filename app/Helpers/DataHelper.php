@@ -11,8 +11,6 @@ class DataHelper
      */
     public static function strong($pattern, $string)
     {
-        $result =  str_ireplace($pattern, "<strong>$pattern</strong>", $string);
-
-        return $result;
+        return str_ireplace($pattern, "<strong>$pattern</strong>", $string);
     }
 }

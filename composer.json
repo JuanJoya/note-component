@@ -1,5 +1,5 @@
 {
-    "name": "juanjoya/note-component-test",
+    "name": "juanjoya/note-component",
     "description": "App de notas utilizando algunos componentes internos de laravel.",
     "type": "Project",
     "license": "MIT",
@@ -15,6 +15,7 @@
         "illuminate/routing": "5.1.*"
     },
     "autoload": {
+        "files": ["app/Helpers/Helper.php"],
         "psr-4": {
             "Note\\": "app/"
         }

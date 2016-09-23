@@ -1,4 +1,5 @@
 <?php
+
 use Note\Domain\Author;
 
 class AuthorTest extends PHPUnit_Framework_TestCase
@@ -21,7 +22,7 @@ class AuthorTest extends PHPUnit_Framework_TestCase
 
         $author->setName('juan', 'joya');
 
-        $fullName = $author->getAuthorName();
+        $fullName = $author->getFullName();
         $username = $author->getUsername();
 
         $this->assertEquals('juan joya', $fullName);

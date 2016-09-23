@@ -1,4 +1,5 @@
 <?php
+
 namespace Note\Http\Controllers;
 
 use Note\Domain\AuthorService;
@@ -48,10 +49,9 @@ class HomeController
     public function create()
     {
         /**
-         *  $defaultUser debería ser el user de la sesión.
+         *  $defaultUser deberÃ­a ser el user de la sesiÃ³n.
          */
         $defaultUser = $this->userService->find('1');
-
         $authors = $this->authorService->authors($defaultUser->getId());
 
         $view = new View('create', [
@@ -65,7 +65,7 @@ class HomeController
     public function store()
     {
         /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
+         * En vez de $_POST se deberÃ­a utilizar un objeto modelado como request
          */
         if($_POST)
         {
@@ -81,21 +81,23 @@ class HomeController
     public function find()
     {
         /**
-         *  $defaultUser debería ser el user de la sesión.
+         *  $defaultUser deberÃ­a ser el user de la sesiÃ³n.
          */
         $defaultUser = $this->userService->find('1');
         $authors = $this->authorService->authors($defaultUser->getId());
+
         $view = new View('find', [
             'user' => $defaultUser,
             'authors' => $authors
         ]);
+
         return $view->render();
     }
 
     public function show()
     {
         /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
+         * En vez de $_POST se deberÃ­a utilizar un objeto modelado como request
          */
         if($_POST)
         {
@@ -128,7 +130,7 @@ class HomeController
     public function save()
     {
         /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
+         * En vez de $_POST se deberÃ­a utilizar un objeto modelado como request
          */
         if($_POST)
         {
@@ -137,6 +139,7 @@ class HomeController
             $params['id'] = $_POST['note-id'];
             $this->noteService->update($params);
         }
+
         return $this->index();
     }
 
@@ -153,23 +156,18 @@ class HomeController
     public function check()
     {
         /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
+         * En vez de $_POST se deberÃ­a utilizar un objeto modelado como request
          */
-        if(isset($_POST['note-word']))
-        {
+        if(isset($_POST['note-word'])) {
             $query = trim($_POST['note-word']);
-            if(!empty($query))
-            {
+
+            if(!empty($query)) {
                 $result = $this->noteService->search($query);
                 $notes = $this->searchReplace($query,$result);
-            }
-            else
-            {
+            } else {
                 $notes = null;
             }
-        }
-        else
-        {
+        } else {
             $notes = null;
         }
 
@@ -183,6 +181,7 @@ class HomeController
     public function search()
     {
         $view = new View('search');
+
         return $view->render();
     }
 
@@ -193,10 +192,8 @@ class HomeController
      */
     protected function searchReplace($pattern, $notes)
     {
-        if($notes->all())
-        {
-            foreach($notes as $note)
-            {
+        if(!$notes->isEmpty()) {
+            foreach($notes as $note) {
                 $note->setTitile(
                     DataHelper::strong($pattern,$note->getTitle())
                 );
@@ -204,11 +201,8 @@ class HomeController
                     DataHelper::strong($pattern,$note->getContent())
                 );
             }
-
             return $notes;
-        }
-        else
-        {
+        } else {
             return null;
         }
     }

@@ -1,4 +1,5 @@
 <?php
+
 namespace Note\Infrastructure;
 use Illuminate\Support\Collection;
 

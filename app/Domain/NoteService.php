@@ -6,11 +6,11 @@ use Note\Infrastructure\NoteRepository;
 class NoteService extends Service
 {
     /**
-     * @param NoteRepository $notes instancia del repositorio de Note
+     * @param NoteRepository $note instancia del repositorio de Note
      */
-    public function __construct(NoteRepository $notes)
+    public function __construct(NoteRepository $note)
     {
-        parent::__construct($notes);
+        parent::__construct($note);
     }
 
     /**

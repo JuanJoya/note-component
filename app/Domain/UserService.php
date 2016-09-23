@@ -6,10 +6,10 @@ use Note\Infrastructure\UserRepository;
 class UserService extends Service
 {
     /**
-     * @param UserRepository $users instancia del repositorio de User
+     * @param UserRepository $user instancia del repositorio de User
      */
-    public function __construct(UserRepository $users)
+    public function __construct(UserRepository $user)
     {
-        parent::__construct($users);
+        parent::__construct($user);
     }
 }
