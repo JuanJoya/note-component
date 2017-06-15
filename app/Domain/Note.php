@@ -27,31 +27,12 @@ class Note
      * @param string $content
      * @param null|string $id
      */
-    public function __construct($author, $title, $content, $id = null)
+    public function __construct(Author $author, $title, $content, $id = null)
     {
-        $this->setAuthor($author);
-        $this->title = $title;
-        $this->content = $content;
-        $this->id = $id;
-    }
-
-    /**
-     * @param Author $author
-     */
-    public function setAuthor($author)
-    {
-        if(!$author instanceof Author) {
-            throw new \InvalidArgumentException("This isn't an author");
-        }
         $this->author = $author;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getId()
-    {
-        return $this->id;
+        $this->setTitle($title);
+        $this->setContent($content);
+        $this->id = $id;
     }
 
     /**
@@ -65,8 +46,11 @@ class Note
     /**
      * @param string $title
      */
-    public function setTitile($title)
+    public function setTitle($title)
     {
+        if(empty($title)) {
+            throw new \InvalidArgumentException("Empty Title");
+        }
         $this->title = $title;
     }
 
@@ -83,22 +67,25 @@ class Note
      */
     public function setContent($content)
     {
+        if(empty($content)) {
+            throw new \InvalidArgumentException("Empty Content");
+        }
         $this->content = $content;
     }
 
     /**
-     * @return string
+     * @return Author
      */
     public function getAuthor()
     {
-        return $this->author->getUsername();
+        return $this->author;
     }
 
     /**
-     * @return string
+     * @return null|string
      */
-    public function getAuthorName()
+    public function getId()
     {
-        return $this->author->getFullName();
+        return $this->id;
     }
 }

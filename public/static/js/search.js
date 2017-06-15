@@ -5,17 +5,20 @@ $(function(){
 
     $('#search-input').keyup(function(){
         var query = $('#search-input').val();
-
         $.ajax({
+            cache: false,
             type: 'POST',
             url: '/search',
-            data: ('note-word='+query)
+            dataType: 'html',
+            data: {query: query}
         })
         .done(function(response){
             $('#result').html(response);
         })
-        .fail(function(){
-            $('#result').html('<h2>Request Error</h2>');
+        .fail(function(jqXHR, textStatus, errorThrown){
+            $('#result').html(
+                '<div class="alert alert-danger">'+jqXHR.status+'</div>'
+            )
         })
     })
-})
+});

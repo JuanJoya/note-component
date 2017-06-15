@@ -3,44 +3,38 @@
 namespace Note\Http\Controllers;
 
 use Note\Domain\AuthorService;
+use Note\Domain\Note;
 use Note\Domain\NoteService;
+use Note\Domain\User;
 use Note\Domain\UserService;
-use Note\Helpers\DataHelper;
-use Note\Http\Views\View;
+use Note\Http\Responses\View;
 
-class HomeController
+class HomeController extends BaseController
 {
     /**
      * @var NoteService permite interactuar con el repositorio de Note
      */
-    private $noteService;
+    private $notes;
     /**
      * @var UserService permite interactuar con el repositorio User
      */
-    private $userService;
+    private $users;
     /**
      * @var AuthorService permite interactuar con el repositorio Author
      */
-    private $authorService;
+    private $authors;
 
-    /**
-     * @param NoteService $noteService
-     * @param UserService $userService
-     * @param AuthorService $authorService
-     */
-    public function __construct(NoteService $noteService, UserService $userService, AuthorService $authorService)
+    public function __construct(NoteService $note, UserService $user, AuthorService $author)
     {
-        $this->noteService = $noteService;
-        $this->userService = $userService;
-        $this->authorService = $authorService;
+        $this->notes   = $note;
+        $this->users   = $user;
+        $this->authors = $author;
     }
 
     public function index()
     {
-        $notes = $this->noteService->all();
-
         $view = new View('home', [
-            'notes' => $notes,
+            'notes' => $this->notes->all(),
         ]);
 
         return $view->render();
@@ -48,14 +42,9 @@ class HomeController
 
     public function create()
     {
-        /**
-         *  $defaultUser debería ser el user de la sesión.
-         */
-        $defaultUser = $this->userService->find('1');
-        $authors = $this->authorService->authors($defaultUser->getId());
-
+        $authors = $this->authors->authors($this->currentUser());
         $view = new View('create', [
-            'user' => $defaultUser,
+            'user' => $this->currentUser(),
             'authors' => $authors
         ]);
 
@@ -64,15 +53,15 @@ class HomeController
 
     public function store()
     {
-        /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
-         */
-        if($_POST)
-        {
-            $params['title'] = $_POST['note-title'];
-            $params['content'] = $_POST['note-content'];
-            $params['author_id'] = $_POST['note-author-id'];
-            $this->noteService->save($params);
+        if(self::$request->has('title', 'content', 'author_id')) {
+            $author = $this->authors->findOrFail(self::$request->get('author_id'));
+            $this->authors->validateAuthor($author, $this->currentUser());
+            $note   = new Note(
+                $author,
+                self::$request->get('title'),
+                self::$request->get('content')
+            );
+            $this->notes->save($note);
         }
 
         return $this->index();
@@ -80,14 +69,9 @@ class HomeController
 
     public function find()
     {
-        /**
-         *  $defaultUser debería ser el user de la sesión.
-         */
-        $defaultUser = $this->userService->find('1');
-        $authors = $this->authorService->authors($defaultUser->getId());
-
+        $authors = $this->authors->authors($this->currentUser());
         $view = new View('find', [
-            'user' => $defaultUser,
+            'user' => $this->currentUser(),
             'authors' => $authors
         ]);
 
@@ -96,30 +80,24 @@ class HomeController
 
     public function show()
     {
-        /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
-         */
-        if($_POST)
-        {
-            $authorId = $_POST['note-author-id'];
-            $notes = $this->noteService->notes($authorId);
-
+        if(self::$request->has('author_id')) {
+            $author = $this->authors->findOrFail(self::$request->get('author_id'));
+            $this->authors->validateAuthor($author, $this->currentUser());
+            $notes  = $this->notes->notesByAuthor($author);
             $view = new View('show', [
                 'notes' => $notes
             ]);
 
             return $view->render();
         }
+
+        return $this->index();
     }
 
-    /**
-     * @param string $id id de Note por URL
-     * @return \Illuminate\Http\Response
-     */
     public function update($id)
     {
-        $note = $this->noteService->find($id);
-
+        $note = $this->notes->findOrFail($id);
+        $this->authors->validateAuthor($note->getAuthor(), $this->currentUser());
         $view = new View('update', [
             'note' => $note
         ]);
@@ -129,15 +107,13 @@ class HomeController
 
     public function save()
     {
-        /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
-         */
-        if($_POST)
-        {
-            $params['title'] = $_POST['note-title'];
-            $params['content'] = $_POST['note-content'];
-            $params['id'] = $_POST['note-id'];
-            $this->noteService->update($params);
+        if(self::$request->has('title', 'content', 'id')) {
+            $note = $this->notes->findOrFail(self::$request->get('id'));
+            $this->authors->validateAuthor($note->getAuthor(), $this->currentUser());
+            $note->setTitle(self::$request->get('title'));
+            $note->setContent(self::$request->get('content'));
+
+            $this->notes->update($note);
         }
 
         return $this->index();
@@ -145,65 +121,38 @@ class HomeController
 
     public function delete($id)
     {
-        /**
-         * Validar credenciales de User por url
-         */
-        $this->noteService->delete($id);
+        $note = $this->notes->findOrFail($id);
+        $this->authors->validateAuthor($note->getAuthor(), $this->currentUser());
+        $this->notes->delete($id);
 
         return $this->index();
     }
 
     public function check()
     {
-        /**
-         * En vez de $_POST se debería utilizar un objeto modelado como request
-         */
-        if(isset($_POST['note-word'])) {
-            $query = trim($_POST['note-word']);
+        if(self::$request->has('query')) {
+            $query = self::$request->get('query');
+            $notes = $this->notes->search($query);
+            $view  = new View('searchResult', [
+                'notes' => $notes,
+                'query' => trim($query)
+            ], false);
 
-            if(!empty($query)) {
-                $result = $this->noteService->search($query);
-                $notes = $this->searchReplace($query,$result);
-            } else {
-                $notes = null;
-            }
-        } else {
-            $notes = null;
+            return $view->render();
         }
-
-        $view = new View('searchResult', [
-            'notes' => $notes,
-        ]);
-
-        return $view->render();
     }
 
     public function search()
     {
         $view = new View('search');
-
         return $view->render();
     }
 
     /**
-     * @param string $pattern
-     * @param \Illuminate\Support\Collection $notes
-     * @return null|\Illuminate\Support\Collection
+     * @return User|null
      */
-    protected function searchReplace($pattern, $notes)
+    private function currentUser()
     {
-        if(!$notes->isEmpty()) {
-            foreach($notes as $note) {
-                $note->setTitile(
-                    DataHelper::strong($pattern,$note->getTitle())
-                );
-                $note->setContent(
-                    DataHelper::strong($pattern,$note->getContent())
-                );
-            }
-            return $notes;
-        } else {
-            return null;
-        }
+        return $this->users->findOrFail(1);
     }
 }

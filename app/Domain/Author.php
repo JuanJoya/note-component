@@ -18,12 +18,30 @@ class Author extends User
      * @param string $password contraseña del User
      * @param string $username
      * @param null|string $authorId
+     * @param null|string $userId
      */
-    public function __construct($email, $password, $username, $authorId = null)
+    public function __construct($email, $password, $username, $authorId = null, $userId = null)
     {
-        parent::__construct($email, $password);
+        parent::__construct($email, $password, $userId);
         $this->setUsername($username);
         $this->authorId = $authorId;
+    }
+
+    /**
+     * @param User $user
+     * @param string $username
+     * @param null|string $authorId
+     * @return Author
+     */
+    public static function create(User $user, $username, $authorId = null)
+    {
+        return new Author(
+            $user->getEmail(),
+            $user->getPassword(),
+            $username,
+            $authorId,
+            $user->getId()
+        );
     }
 
     /**

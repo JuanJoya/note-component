@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
+-- version 4.5.2
 -- http://www.phpmyadmin.net
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 19-08-2016 a las 06:49:32
--- Versión del servidor: 10.1.9-MariaDB
--- Versión de PHP: 5.6.15
+-- Servidor: localhost
+-- Tiempo de generación: 15-06-2017 a las 08:33:56
+-- Versión del servidor: 10.1.13-MariaDB
+-- Versión de PHP: 5.6.23
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `note_component`
+-- Base de datos: `note_component_tests`
 --
 
 -- --------------------------------------------------------
@@ -29,17 +29,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `authors` (
   `id` int(5) NOT NULL,
   `user_id` int(5) NOT NULL,
-  `username` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Volcado de datos para la tabla `authors`
---
-
-INSERT INTO `authors` (`id`, `user_id`, `username`) VALUES
-(1, 1, '@juanjoya'),
-(2, 1, '@ingJuanJoya'),
-(3, 2, '@guest');
+  `username` varchar(50) COLLATE utf8_spanish_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -49,20 +40,10 @@ INSERT INTO `authors` (`id`, `user_id`, `username`) VALUES
 
 CREATE TABLE `notes` (
   `id` int(5) NOT NULL,
-  `title` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `content` varchar(200) COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `content` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
   `author_id` int(5) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Volcado de datos para la tabla `notes`
---
-
-INSERT INTO `notes` (`id`, `title`, `content`, `author_id`) VALUES
-(1, 'Note #1', 'This is the first Note', 1),
-(2, 'Note #2', 'This is the second Note', 1),
-(3, 'Note #3', 'This is the third Note', 2),
-(4, 'Note #4', 'This is the fourth Note', 3);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 -- --------------------------------------------------------
 
@@ -72,19 +53,11 @@ INSERT INTO `notes` (`id`, `title`, `content`, `author_id`) VALUES
 
 CREATE TABLE `users` (
   `id` int(5) NOT NULL,
-  `email` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `password` varchar(50) COLLATE utf8_unicode_ci NOT NULL,
-  `first_name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `last_name` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
-
---
--- Volcado de datos para la tabla `users`
---
-
-INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`) VALUES
-(1, 'juan@pc.co', '123456', 'Juan David', 'Joya Ortiz'),
-(2, 'david@pc.co', '123456', 'David', 'Ortiz');
+  `email` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `password` varchar(50) COLLATE utf8_spanish_ci NOT NULL,
+  `first_name` varchar(50) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `last_name` varchar(50) COLLATE utf8_spanish_ci DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Índices para tablas volcadas
@@ -94,7 +67,8 @@ INSERT INTO `users` (`id`, `email`, `password`, `first_name`, `last_name`) VALUE
 -- Indices de la tabla `authors`
 --
 ALTER TABLE `authors`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indices de la tabla `notes`
@@ -106,7 +80,8 @@ ALTER TABLE `notes`
 -- Indices de la tabla `users`
 --
 ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -116,17 +91,17 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `authors`
 --
 ALTER TABLE `authors`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `notes`
 --
 ALTER TABLE `notes`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

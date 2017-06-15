@@ -1,7 +1,9 @@
 <?php
 
 namespace Note\Domain;
+
 use Note\Infrastructure\BaseRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class Service
 {
@@ -11,23 +13,26 @@ abstract class Service
     protected $entity;
 
     /**
-     * @param $entity
-     */
-    public function __construct($entity)
-    {
-        if(! $entity instanceof BaseRepository) {
-            throw new \OutOfBoundsException();
-        }
-        $this->entity = $entity;
-    }
-
-    /**
      * @param string $id
-     * @return mixed Entity Object
+     * @return null|mixed Entity Object
      */
     public function find($id)
     {
+        if (empty($id)) {
+            throw new \InvalidArgumentException("empty id argument");
+        }
+
         return $this->entity->find($id);
+    }
+
+    public function findOrFail($id)
+    {
+        $result = $this->find($id);
+        if (is_null($result)) {
+            throw new NotFoundHttpException();
+        }
+
+        return $result;
     }
 
     /**
@@ -39,10 +44,14 @@ abstract class Service
     }
 
     /**
-     * @param string $id id de una Entity
+     * @param string $id de una Entity
      */
     public function delete($id)
     {
+        if (empty($id)) {
+            throw new \InvalidArgumentException("empty id argument");
+        }
+
         $this->entity->delete($id);
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 namespace Note\Domain;
+
 use Note\Infrastructure\UserRepository;
 
 class UserService extends Service
@@ -10,6 +11,6 @@ class UserService extends Service
      */
     public function __construct(UserRepository $user)
     {
-        parent::__construct($user);
+        $this->entity = $user;
     }
 }

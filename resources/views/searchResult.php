@@ -4,11 +4,12 @@
 <?php
 /**
  * @type \Illuminate\Support\Collection $notes
+ * @type string $query
  */
-    if(empty($notes)):
+    if(empty($notes) || $notes->isEmpty()):
 ?>
         <div class="alert alert-danger" role="alert">
-            <strong>Oops</strong> notes not found.
+            <strong>Oops</strong> hasn't been found any note.
         </div>
 <?php
     else:
@@ -17,17 +18,17 @@
             <div class="panel panel-success">
                 <div class="panel-heading">
                     <h3 class="panel-title">
-                        <?= $note->getTitle()?>
+                        <?= Helper::strong($query, $note->getTitle()) ?>
                         <span class="label label-success author">
-                    by <?=$note->getAuthor()?>
+                    by <?= $note->getAuthor()->getUsername() ?>
                 </span>
                 <span class="label label-info author">
-                    <?=$note->getAuthorName()?>
+                    <?= $note->getAuthor()->getFullName() ?>
                 </span>
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <?= $note->getContent()?>
+                    <?= Helper::strong($query, $note->getContent()) ?>
                 </div>
             </div>
 <?php

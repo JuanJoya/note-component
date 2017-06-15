@@ -1,7 +1,9 @@
 <?php
 
 namespace Note\Domain;
+
 use Note\Infrastructure\AuthorRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class AuthorService extends Service
 {
@@ -10,15 +12,30 @@ class AuthorService extends Service
      */
     public function __construct(AuthorRepository $author)
     {
-        parent::__construct($author);
+        $this->entity = $author;
     }
 
     /**
-     * @param string $userId id del usuario
+     * @param User $user
      * @return \Illuminate\Support\Collection de Author
      */
-    public function authors($userId)
+    public function authors(User $user)
     {
-        return $this->entity->authors($userId);
+        if(empty($user->getId())) {
+            throw new \InvalidArgumentException("Empty user id");
+        }
+
+        return $this->entity->authors($user->getId());
+    }
+
+    /**
+     * @param Author $author
+     * @param User $user Auth
+     */
+    public function validateAuthor(Author $author, User $user)
+    {
+        if ($author->getId() != $user->getId()) {
+            throw new NotFoundHttpException();
+        }
     }
 }

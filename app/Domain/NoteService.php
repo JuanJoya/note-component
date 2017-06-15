@@ -1,6 +1,7 @@
 <?php
 
 namespace Note\Domain;
+
 use Note\Infrastructure\NoteRepository;
 
 class NoteService extends Service
@@ -10,40 +11,47 @@ class NoteService extends Service
      */
     public function __construct(NoteRepository $note)
     {
-        parent::__construct($note);
+        $this->entity = $note;
     }
 
     /**
-     * @param array $params contiene Author id, title & content
+     * @param Note $note
      */
-    public function save(array $params)
+    public function save(Note $note)
     {
-        $this->entity->save($params);
+        $this->entity->save($note);
     }
 
     /**
-     * @param array $params contiene Note id, title & content
+     * @param Note $note
      */
-    public function update(array $params)
+    public function update(Note $note)
     {
-        $this->entity->update($params);
+        $this->entity->update($note);
+    }
+
+    /**
+     * @param Author $author
+     * @return \Illuminate\Support\Collection de Note
+     */
+    public function notesByAuthor(Author $author)
+    {
+        if(empty($author->getAuthorId())) {
+            throw new \InvalidArgumentException("Empty Author id");
+        }
+
+        return $this->entity->notesByAuthor($author->getAuthorId());
     }
 
     /**
      * @param string $query patron a buscar en la DB del title o content
-     * @return \Illuminate\Support\Collection de Note
+     * @return null|\Illuminate\Support\Collection
      */
     public function search($query)
     {
-        return $this->entity->search($query);
-    }
-
-    /**
-     * @param string $authorId
-     * @return \Illuminate\Support\Collection de Note
-     */
-    public function notes($authorId)
-    {
-        return $this->entity->notes($authorId);
+        $query = trim($query);
+        if(!empty($query)) {
+            return $this->entity->search($query);
+        }
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 namespace Note\Infrastructure;
+
+use Helper;
 use Note\Domain\Note;
 
 class NoteRepository extends BaseRepository
@@ -19,44 +21,39 @@ class NoteRepository extends BaseRepository
     }
 
     /**
-     * @return string
+     * @param Note $note
      */
-    protected function table()
+    public function save(Note $note)
     {
-        return 'notes';
-    }
-
-    /**
-     * @param array $params campos necesarios para crear Note en DB
-     */
-    public function save(array $params)
-    {
+        $this->validateAuthor($note->getAuthor()->getAuthorId());
         $this->query = "INSERT INTO notes
                           (title, content, author_id)
                         VALUES
                           (:title, :content, :author_id)";
+
         $this->bindParams = [
-            ':title' => $params['title'],
-            ':content' => $params['content'],
-            ':author_id' => $params['author_id'],
+            ':title'     => $note->getTitle(),
+            ':content'   => $note->getContent(),
+            ':author_id' => $note->getAuthor()->getAuthorId(),
         ];
         $this->executeSingleQuery();
     }
 
     /**
-     * @param array $params campos necesarios para modificar Note en DB
+     * @param Note $note
      */
-    public function update(array $params)
+    public function update(Note $note)
     {
+        $this->validateNote($note->getId());
         $this->query = "UPDATE notes
                         SET  title = :title,
                              content = :content
                         WHERE id = :id";
 
         $this->bindParams = [
-            ':title' => $params['title'],
-            ':content' => $params['content'],
-            ':id' => $params['id'],
+            ':title'   => $note->getTitle(),
+            ':content' => $note->getContent(),
+            ':id'      => $note->getId(),
         ];
         $this->executeSingleQuery();
     }
@@ -67,8 +64,8 @@ class NoteRepository extends BaseRepository
      */
     public function search($query)
     {
-        $this->query = 'SELECT * FROM notes WHERE content LIKE :query OR title LIKE :query';
-        $query = "%$query%";
+        $this->query = "SELECT * FROM notes WHERE content LIKE :query OR title LIKE :query";
+        $query = '%'.Helper::escapeLike($query).'%';
         $this->bindParams = [':query' => $query];
         $this->getResultsFromQuery();
 
@@ -79,17 +76,25 @@ class NoteRepository extends BaseRepository
      * @param string $authorId
      * @return \Illuminate\Support\Collection de Note
      */
-    public function notes($authorId)
+    public function notesByAuthor($authorId)
     {
-        $this->query = "SELECT * FROM notes WHERE author_id = :Id";
-        $this->bindParams = [':Id' => $authorId];
+        $this->query = "SELECT * FROM notes WHERE author_id = :id";
+        $this->bindParams = [':id' => $authorId];
         $this->getResultsFromQuery();
 
         return $this->mapToEntity($this->rows);
     }
 
     /**
-     * @param array $result
+     * @return string nombre de la tabla en db
+     */
+    protected function table()
+    {
+        return 'notes';
+    }
+
+    /**
+     * @param array $result datos de la db
      * @return Note
      */
     protected function mapEntity(array $result)
@@ -102,6 +107,26 @@ class NoteRepository extends BaseRepository
             $result['content'],
             $result['id']
         );
+    }
+
+    /**
+     * @param string $authorId
+     */
+    private function validateAuthor($authorId)
+    {
+        if (!$this->authorRepository->inDatabase($authorId)) {
+            throw new \LogicException("The author of this note is not stored in database");
+        }
+    }
+
+    /**
+     * @param string $noteId
+     */
+    private function validateNote($noteId)
+    {
+        if (!$this->inDatabase($noteId)) {
+            throw new \LogicException("This note is not stored in database");
+        }
     }
 
 }

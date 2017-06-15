@@ -6,7 +6,8 @@ composer install
 ````
 Para correr los tests
 ````
-phpunit --bootstrap vendor/autoload.php tests
+[global]  phpunit --bootstrap vendor/autoload.php tests
+[local]     ./vendor/bin/phpunit tests
 ````
 Para servir archivos estáticos
 ````
