@@ -1,7 +1,7 @@
 {
     "name": "juanjoya/note-component",
-    "description": "App de notas utilizando algunos componentes internos de laravel.",
-    "type": "Project",
+    "description": "Simple php application for notes management.",
+    "type": "project",
     "license": "MIT",
     "authors": [
         {
@@ -10,15 +10,22 @@
         }
     ],
     "require": {
-        "illuminate/http": "5.1.*",
-        "illuminate/view": "5.1.*",
-        "illuminate/routing": "5.1.*"
+        "php": ">=7.2.0",
+        "illuminate/events": "5.1.*",
+        "illuminate/routing": "5.1.*",
+        "illuminate/pagination": "5.1.*",
+        "filp/whoops": "^2.5",
+        "fzaninotto/faker": "^1.8",
+        "siriusphp/validation": "^2.3",
+        "twig/twig": "^2.12",
+        "tamtamchik/simple-flash": "^1.2"
     },
     "require-dev": {
-        "phpunit/phpunit": "^4.8"
+        "phpunit/phpunit": "^8",
+        "squizlabs/php_codesniffer": "3.*"
     },
     "autoload": {
-        "files": ["app/Helpers/Helper.php"],
+        "files": ["app/Src/helpers.php"],
         "psr-4": {
             "Note\\": "app/"
         }

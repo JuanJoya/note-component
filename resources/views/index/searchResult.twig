@@ -1,0 +1,32 @@
+{# @var \Illuminate\Support\Collection $notes #}
+{% if notes.isEmpty() %}
+<div class="alert alert-warning mt-4" role="alert">
+    <strong>Oops! </strong> hasn't been found any note.
+</div>
+{% else %}
+<div class="row mt-3" data-search="{{ search }}">
+    {% for note in notes %}
+    <div class="col-lg-12 py-2">
+        <div class="card border-info">
+            <div class="card-header text-info n-strong">{{ note.title }}</div>
+            <div class="card-body">
+                <p class="card-text text-muted font-weight-light n-strong">{{ note.content }}</p>
+            </div>
+            <div class="card-footer bg-white">
+                <div class="text-muted d-flex justify-content-between align-items-center">
+                    <small>by 
+                        <a class="text-info" href="{{ route('author.notes', {'slug': note.author.slug}) }}">
+                            {{ note.author.username }}
+                        </a>
+                    </small>
+                    <div>
+                        <small class="text-info">Updated: {{ note.updatedAt|date("m/d/Y") }}</small> | 
+                        <small class="text-muted">Created: {{ note.createdAt|date("m/d/Y") }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}

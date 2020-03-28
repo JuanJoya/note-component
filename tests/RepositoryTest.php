@@ -47,7 +47,7 @@ class RepositoryTest extends PHPUnit_Framework_TestCase
         $this->userRepo   = new UserRepository();
         $this->authorRepo = new AuthorRepository($this->userRepo);
         $this->noteRepo   = new NoteRepository($this->authorRepo);
-        $this->noteRepo->truncate();
+        $this->noteRepo->executeSingleQuery("DELETE FROM users;DELETE FROM authors;DELETE FROM notes;");
     }
 
     function test_create_user_in_db()

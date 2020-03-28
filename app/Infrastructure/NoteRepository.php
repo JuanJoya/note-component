@@ -1,132 +1,167 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Infrastructure;
 
-use Helper;
-use Note\Domain\Note;
+use Note\Domain\{User, Author, Note};
+use Illuminate\Support\Collection;
 
 class NoteRepository extends BaseRepository
 {
     /**
-     * @var AuthorRepository instancia del repositorio de Note
+     * @param string $query
+     * @return Collection
      */
-    private $authorRepository;
-
-    /**
-     * @param AuthorRepository $authorRepository
-     */
-    public function __construct(AuthorRepository $authorRepository)
+    public function all(string $query = null): Collection
     {
-        $this->authorRepository = $authorRepository;
+        return parent::all(
+            "SELECT n.*, a.username, a.slug, a.user_id, u.email
+             FROM notes n
+             INNER JOIN authors a ON a.id = n.author_id
+             INNER JOIN users u ON u.id = a.user_id
+             ORDER BY n.id ASC"
+        );
     }
 
     /**
-     * @param Note $note
+     * @param int|string $param
+     * @param string $type
+     * @param string $query
+     * @return object|null
      */
-    public function save(Note $note)
+    public function find($param, string $type = 'id', string $query = null)
     {
-        $this->validateAuthor($note->getAuthor()->getAuthorId());
-        $this->query = "INSERT INTO notes
-                          (title, content, author_id)
-                        VALUES
-                          (:title, :content, :author_id)";
+        return parent::find(
+            $param,
+            $type,
+            "SELECT n.*, a.username, a.slug, a.user_id, u.email
+             FROM notes n
+             INNER JOIN authors a ON a.id = n.author_id
+             INNER JOIN users u ON u.id = a.user_id
+             WHERE n.{$type} = :{$type}"
+        );
+    }
 
+    /**
+     * @param array $attributes
+     * @return void
+     */
+    public function save(array $attributes): void
+    {
         $this->bindParams = [
-            ':title'     => $note->getTitle(),
-            ':content'   => $note->getContent(),
-            ':author_id' => $note->getAuthor()->getAuthorId(),
+            ':title'     => $attributes['title'],
+            ':content'   => $attributes['content'],
+            ':author_id' => $attributes['author_id'],
         ];
-        $this->executeSingleQuery();
+        $this->executeSingleQuery(
+            "INSERT INTO notes (title, content, author_id)
+             VALUES (:title, :content, :author_id)"
+        );
     }
 
     /**
-     * @param Note $note
+     * @param array $attributes
+     * @return void
      */
-    public function update(Note $note)
+    public function update(array $attributes): void
     {
-        $this->validateNote($note->getId());
-        $this->query = "UPDATE notes
-                        SET  title = :title,
-                             content = :content
-                        WHERE id = :id";
-
+        $this->validateNote($attributes['id']);
         $this->bindParams = [
-            ':title'   => $note->getTitle(),
-            ':content' => $note->getContent(),
-            ':id'      => $note->getId(),
+            ':title'      => $attributes['title'],
+            ':content'    => $attributes['content'],
+            ':updated_at' => $attributes['updated_at'],
+            ':id'         => $attributes['id'],
         ];
-        $this->executeSingleQuery();
+        $this->executeSingleQuery(
+            "UPDATE notes
+             SET title = :title, content = :content, updated_at = :updated_at 
+             WHERE id = :id"
+        );
     }
 
     /**
-     * @param string $query parámetro de búsqueda en title o content
-     * @return \Illuminate\Support\Collection
+     * @param string $query
+     * @return Collection
+     * Desactivar [ATTR_EMULATE_PREPARES] implica que no se pueden repetir
+     * los placeholders (:query) en la sentencia SQL.
      */
-    public function search($query)
+    public function search(string $query): Collection
     {
-        $this->query = "SELECT * FROM notes WHERE content LIKE :query OR title LIKE :query";
-        $query = '%'.Helper::escapeLike($query).'%';
-        $this->bindParams = [':query' => $query];
-        $this->getResultsFromQuery();
-
-        return $this->mapToEntity($this->rows);
+        $query = '%' . escapeLike($query) . '%';
+        $this->bindParams = [
+            ':content' => $query,
+            ':title'   => $query
+        ];
+        $result = $this->getResultsFromQuery(
+            "SELECT n.*, a.username, a.slug, a.user_id, u.email
+             FROM notes n
+             INNER JOIN authors a ON a.id = n.author_id
+             INNER JOIN users u ON u.id = a.user_id
+             WHERE n.content LIKE :content OR n.title LIKE :title"
+        );
+        return $this->mapToEntity($result);
     }
 
     /**
-     * @param string $authorId
-     * @return \Illuminate\Support\Collection de Note
+     * @param int $author_id
+     * @return Collection
      */
-    public function notesByAuthor($authorId)
+    public function notes(int $author_id): Collection
     {
-        $this->query = "SELECT * FROM notes WHERE author_id = :id";
-        $this->bindParams = [':id' => $authorId];
-        $this->getResultsFromQuery();
-
-        return $this->mapToEntity($this->rows);
+        $this->bindParams = [':author_id' => $author_id];
+        $result = $this->getResultsFromQuery(
+            "SELECT n.*, a.username, a.slug, a.user_id, u.email
+             FROM notes n
+             INNER JOIN authors a ON a.id = n.author_id
+             INNER JOIN users u ON u.id = a.user_id
+             WHERE n.author_id = :author_id
+             ORDER BY n.updated_at DESC"
+        );
+        return $this->mapToEntity($result);
     }
 
     /**
-     * @return string nombre de la tabla en db
-     */
-    protected function table()
-    {
-        return 'notes';
-    }
-
-    /**
-     * @param array $result datos de la db
+     * @param array $result ResultSet de la base de datos.
      * @return Note
      */
-    protected function mapEntity(array $result)
+    protected function mapEntity(array $result): Note
     {
-        $author = $this->authorRepository->find($result['author_id']);
-        
+        $user = new User(
+            $result['email'],
+            $result['user_id']
+        );
+        $author = new Author(
+            $user,
+            $result['username'],
+            $result['slug'],
+            $result['author_id'],
+        );
         return new Note(
             $author,
             $result['title'],
             $result['content'],
+            $result['created_at'],
+            $result['updated_at'],
             $result['id']
         );
     }
 
     /**
-     * @param string $authorId
+     * @return string nombre de la tabla en la base de datos.
      */
-    private function validateAuthor($authorId)
+    protected function table(): string
     {
-        if (!$this->authorRepository->inDatabase($authorId)) {
-            throw new \LogicException("The author of this note is not stored in database");
-        }
+        return 'notes';
     }
 
     /**
-     * @param string $noteId
+     * @param int $note_id
      */
-    private function validateNote($noteId)
+    private function validateNote(int $note_id)
     {
-        if (!$this->inDatabase($noteId)) {
-            throw new \LogicException("This note is not stored in database");
+        if (!$this->inDatabase($note_id)) {
+            throw new \RuntimeException("This note is not stored in database");
         }
     }
-
 }

@@ -1,114 +1,97 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Infrastructure;
 
 use Illuminate\Support\Collection;
+use Note\Src\Database\SimpleQuery;
 
-abstract class BaseRepository extends Database
+abstract class BaseRepository extends SimpleQuery
 {
     /**
-     * @return string
+     * @param string $query
+     * @return Collection
      */
-    abstract protected function table();
-
-    /**
-     * @param array $result
-     * @return mixed Entity Object
-     */
-    abstract protected function mapEntity(array $result);
-
-    /**
-     * Only for database test's
-     */
-    public function truncate()
+    public function all(string $query = null): Collection
     {
-        $this->query = "
-            DELETE FROM users;
-            DELETE FROM authors;
-            DELETE FROM notes;";
-        $this->executeSingleQuery();
+        return $this->mapToEntity(
+            $this->getResultsFromQuery($query ?? "SELECT * FROM {$this->table()}")
+        );
     }
 
     /**
-     * @return Collection de Entity Objects
-     */
-    public function all()
-    {
-        $this->query = "SELECT * FROM {$this->table()}";
-        $this->getResultsFromQuery();
-
-        return $this->mapToEntity($this->rows);
-    }
-
-    /**
-     * @param string $param
+     * @param int|string $param
      * @param string $type
-     * @return null|mixed Entity Object
+     * @param string $query
+     * @return Collection|object|null
      */
-    public function find($param, $type = 'id')
+    public function find($param, string $type = 'id', string $query = null)
     {
-        $this->query = "SELECT * FROM {$this->table()} WHERE {$type} = :{$type}";
         $this->bindParams = [":{$type}" => $param];
-        $this->getResultsFromQuery();
+        $result = $this->getResultsFromQuery($query ?? "SELECT * FROM {$this->table()} WHERE {$type} = :{$type}");
 
-        if (!empty($this->rows)) {
-            return $this->mapEntity(array_shift($this->rows));
+        if (!empty($result)) {
+            return (count($result) > 1)
+            ? $this->mapToEntity($result)
+            : $this->mapEntity(array_shift($result));
         }
     }
 
     /**
-     * @param string $id
+     * @param int $id
+     * @return bool
      */
-    public function delete($id)
+    public function delete(int $id): bool
     {
-        $this->query = "DELETE FROM {$this->table()} WHERE id = :id";
         $this->bindParams = [':id' => $id];
-        $this->executeSingleQuery();
+        return $this->executeSingleQuery("DELETE FROM {$this->table()} WHERE id = :id") ? true : false;
     }
 
     /**
-     * @param string $id
+     * @param int $id
      * @return bool
      */
-    public function inDatabase($id)
+    public function inDatabase(int $id): bool
     {
         return !is_null($this->find($id));
     }
 
     /**
-     * @param string $id
-     * @param string $dbField nombre del campo en la db
-     * @param string $ownerId
-     * @return bool
+     * @param array $results ResultSet de la base de datos.
+     * @return Collection
      */
-    public function belongsTo($id, $dbField, $ownerId)
+    protected function mapToEntity(array $results): Collection
     {
-        $this->query = "SELECT * FROM {$this->table()} WHERE id = :id AND {$dbField} = :ownerId";
-        $this->bindParams = [
-            ':id'      => $id,
-            ':ownerId' => $ownerId
-        ];
-        $this->getResultsFromQuery();
-
-        if (empty($this->rows)) {
-            return false;
+        $collection = Collection::make();
+        foreach ($results as $result) {
+            $collection->push(
+                $this->mapEntity($result)
+            );
         }
-
-        return true;
+        return $collection;
     }
 
     /**
-     * @param array $results datos de la db
-     * @return Collection
+     * @param array $attributes
+     * @return void
      */
-    protected function mapToEntity(array $results)
-    {
-        $collection = new Collection();
-        foreach ($results as $result) {
-            $entity = $this->mapEntity($result);
-            $collection->push($entity);
-        }
+    abstract public function save(array $attributes): void;
 
-        return $collection;
-    }
+    /**
+     * @param array $attributes
+     * @return void
+     */
+    abstract public function update(array $attributes): void;
+
+    /**
+     * @return string nombre de la tabla en la base de datos.
+     */
+    abstract protected function table(): string;
+
+    /**
+     * @param array $result ResultSet de la base de datos.
+     * @return object
+     */
+    abstract protected function mapEntity(array $result): object;
 }

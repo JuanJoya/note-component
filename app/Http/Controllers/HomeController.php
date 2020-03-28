@@ -2,157 +2,52 @@
 
 namespace Note\Http\Controllers;
 
-use Note\Domain\AuthorService;
-use Note\Domain\Note;
-use Note\Domain\NoteService;
-use Note\Domain\User;
-use Note\Domain\UserService;
-use Note\Http\Responses\View;
+use Note\Src\Response\View;
+use Note\Src\Template\TemplateEngine;
+use Note\Domain\Services\Note\NoteService;
+use Note\Domain\Services\Author\AuthorService;
+use Illuminate\Http\Request;
 
 class HomeController extends BaseController
 {
     /**
-     * @var NoteService permite interactuar con el repositorio de Note
+     * @var NoteService
      */
     private $notes;
-    /**
-     * @var UserService permite interactuar con el repositorio User
-     */
-    private $users;
-    /**
-     * @var AuthorService permite interactuar con el repositorio Author
-     */
-    private $authors;
 
-    public function __construct(NoteService $note, UserService $user, AuthorService $author)
+    public function __construct(NoteService $notes)
     {
-        $this->notes   = $note;
-        $this->users   = $user;
-        $this->authors = $author;
+        $this->notes = $notes;
     }
 
-    public function index()
+    public function index(View $view)
     {
-        $view = new View('home', [
-            'notes' => $this->notes->all(),
-        ]);
-
-        return $view->render();
+        $notes = $this->notes->all();
+        return $view->make('index.home', ['notes' => $this->paginate($notes, 10)]);
     }
 
-    public function create()
+    public function show(string $slug, View $view, AuthorService $authors)
     {
-        $authors = $this->authors->authors($this->currentUser());
-        $view = new View('create', [
-            'user' => $this->currentUser(),
-            'authors' => $authors
-        ]);
-
-        return $view->render();
+        $author = $authors->find($slug, 'slug', true);
+        $notes = $this->notes->find($author->getId(), 'author_id');
+        return $view->make('index.home', ['notes' => $this->paginate($notes, 10)]);
     }
 
-    public function store()
+    public function search(View $view)
     {
-        if(self::$request->has('title', 'content', 'author_id')) {
-            $author = $this->authors->findOrFail(self::$request->get('author_id'));
-            $this->authors->validateAuthor($author, $this->currentUser());
-            $note   = new Note(
-                $author,
-                self::$request->get('title'),
-                self::$request->get('content')
-            );
-            $this->notes->save($note);
-        }
-
-        return $this->index();
+        return $view->make('index.search');
     }
 
-    public function find()
+    public function check(Request $request, TemplateEngine $template)
     {
-        $authors = $this->authors->authors($this->currentUser());
-        $view = new View('find', [
-            'user' => $this->currentUser(),
-            'authors' => $authors
-        ]);
-
-        return $view->render();
-    }
-
-    public function show()
-    {
-        if(self::$request->has('author_id')) {
-            $author = $this->authors->findOrFail(self::$request->get('author_id'));
-            $this->authors->validateAuthor($author, $this->currentUser());
-            $notes  = $this->notes->notesByAuthor($author);
-            $view = new View('show', [
-                'notes' => $notes
+        if ($request->ajax()) {
+            $notes = $this->notes->search($request->q);
+            return $template->render('index.searchResult', [
+                'notes'  => $notes,
+                'search' => preg_quote(trim($request->q), '/')
             ]);
-
-            return $view->render();
+        } else {
+            abort();
         }
-
-        return $this->index();
-    }
-
-    public function update($id)
-    {
-        $note = $this->notes->findOrFail($id);
-        $this->authors->validateAuthor($note->getAuthor(), $this->currentUser());
-        $view = new View('update', [
-            'note' => $note
-        ]);
-
-        return $view->render();
-    }
-
-    public function save()
-    {
-        if(self::$request->has('title', 'content', 'id')) {
-            $note = $this->notes->findOrFail(self::$request->get('id'));
-            $this->authors->validateAuthor($note->getAuthor(), $this->currentUser());
-            $note->setTitle(self::$request->get('title'));
-            $note->setContent(self::$request->get('content'));
-
-            $this->notes->update($note);
-        }
-
-        return $this->index();
-    }
-
-    public function delete($id)
-    {
-        $note = $this->notes->findOrFail($id);
-        $this->authors->validateAuthor($note->getAuthor(), $this->currentUser());
-        $this->notes->delete($id);
-
-        return $this->index();
-    }
-
-    public function check()
-    {
-        if(self::$request->has('query')) {
-            $query = self::$request->get('query');
-            $notes = $this->notes->search($query);
-            $view  = new View('searchResult', [
-                'notes' => $notes,
-                'query' => trim($query)
-            ], false);
-
-            return $view->render();
-        }
-    }
-
-    public function search()
-    {
-        $view = new View('search');
-        return $view->render();
-    }
-
-    /**
-     * @return User|null
-     */
-    private function currentUser()
-    {
-        return $this->users->findOrFail(1);
     }
 }

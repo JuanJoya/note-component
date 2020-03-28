@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Domain;
 
 class User
@@ -7,40 +9,35 @@ class User
     /**
      * @var string
      */
-    protected $firstName;
+    private $email;
+
     /**
      * @var string
      */
-    protected $lastName;
+    private $password;
+
     /**
-     * @var string
+     * @var int
      */
-    protected $email;
-    /**
-     * @var string
-     */
-    protected $pass;
-    /**
-     * @var null|string
-     */
-    protected $id;
+    private $id;
 
     /**
      * @param string $email
      * @param string $pass
-     * @param null|string $id
+     * @param int $id
      */
-    public function __construct($email, $pass, $id = null)
+    public function __construct(string $email, int $id, string $password = null)
     {
-        $this->setEmail($email);
-        $this->setPassword($pass);
+        $this->email = $email;
         $this->id = $id;
+        $this->password = $password;
     }
 
     /**
      * @param string $email
+     * @return void
      */
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
         if (! filter_var($email, FILTER_VALIDATE_EMAIL)) {
             throw new \InvalidArgumentException(
@@ -51,81 +48,48 @@ class User
     }
 
     /**
-     * @param string $pass
-     */
-    public function setPassword($pass)
-    {
-        if(empty($pass)) {
-            throw new \InvalidArgumentException(
-                "Empty password"
-            );
-        }
-        $this->pass = $pass;
-    }
-
-    /**
-     * @param string $firstName
-     * @param string $lastName
-     */
-    public function setName($firstName, $lastName)
-    {
-        $this->firstName = $firstName;
-        $this->lastName = $lastName;
-    }
-
-    /**
      * @return string
      */
-    public function getFirstName()
-    {
-        return $this->firstName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getLastName()
-    {
-        return $this->lastName;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
     /**
-     * @return string
+     * @param string $pass
+     * @return void
      */
-    public function getPassword()
+    public function setPassword(string $password): void
     {
-        return $this->pass;
+        if (empty($password)) {
+            throw new \InvalidArgumentException(
+                "Empty password"
+            );
+        }
+        $this->password = $password;
     }
 
     /**
-     * @return string
+     * @return string password-hash
      */
-    public function getFullName()
+    public function getPassword(): string
     {
-        return $this->getFirstName().' '.$this->getLastName();
+        return $this->password;
     }
 
     /**
-     * @param string $id
+     * @return int
      */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * @return null|string
-     */
-    public function getId()
+    public function getId(): int
     {
         return $this->id;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFullName(): string
+    {
+        return substr($this->getId() . '#' . $this->getEmail(), 0, 15);
     }
 }

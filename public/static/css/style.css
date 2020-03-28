@@ -1,39 +1,42 @@
-body
-{
-    padding-top: 50px;
-    background-image: url("../img/pattern.png");
+.logo {
+  padding: 0px 10px;
+  font-size: 36px;
+  color:deepskyblue;
 }
-
-.author
-{
-    float: right;
-    margin-right: 5px;
+textarea {
+  resize: vertical;
 }
-
-textarea
-{
-    resize: vertical;
+.jumbotron {
+  padding: 2rem 0;
+  margin-bottom: 0;
+  background-color: #fff;
 }
-
-footer
-{
-    padding-top: 64px;
-    text-align: center;
+.jumbotron p:last-child {
+  margin-bottom: 0;
 }
-
-.logo
-{
-    padding: 5px 10px 0 0;
-    font-size: 36px;
-    float:left;
-    color:deepskyblue;
+.jumbotron-heading {
+  font-weight: 300;
 }
-
-.note-btn
-{
-    float: right;
+.jumbotron .container {
+  max-width: 40rem;
+}
+footer {
+  background-color: #fff;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+footer p {
+  margin-bottom: .25rem;
 }
 
 .error-template {padding: 40px 15px;text-align: center;}
 .error-actions {margin-top:15px;margin-bottom:15px;}
 .error-actions .btn { margin-right:10px; }
+
+@media (min-width: 1140px) {
+  .card-columns {
+      -webkit-column-count: 2;
+      -moz-column-count: 2;
+      column-count: 2;
+  }
+}

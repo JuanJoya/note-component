@@ -1,0 +1,95 @@
+{% extends "layout.twig" %}
+
+{% block title %}My notes{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('notes.find') }}">Find</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ author.username }}</li>
+        </ol>
+    </nav>
+    <div class="alert alert-light text-center mb-4" role="alert">
+        <h3 class="font-weight-light text-dark">{{ author.username }} <span class="text-info">&lt;notes&gt;</span></h3>
+        <hr>
+    </div>
+    {{ flash()|raw }}
+    {# @var \Illuminate\Support\Collection $notes #}
+    {# @var \Note\Domain\Note $note #}
+    
+    {% if notes.isEmpty() %}
+    <div class="alert alert-warning" role="alert">
+        <strong>Oops! </strong> <span class="text-info">{{ author.username }}</span> does not have any note.
+    </div>
+    {% else %}
+    <div class="row justify-content-md-center">
+        <div class="col-lg-12">
+            <div class="alert alert-info show-info" role="alert">
+                <strong>Please</strong> select the note to edit.
+            </div>
+            <div class="form-group">
+                <label class="text-muted">Logged user</label>
+                <input class="form-control" type="text" value="{{ author.user.fullName }}" readonly>
+            </div>
+            <div class="form-group">
+                <label class="text-muted">Author</label>
+                <input class="form-control" type="text" value="{{ author.username }}" readonly>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <div class="border border-info rounded bg-white text-info font-weight-normal py-2">Notes</div>
+        </div>
+        {% for note in notes %}
+        <div class="col-lg-6 py-3">
+            <div class="card">
+                <h6 class="card-header text-light bg-info">{{ note.title }}</h6>
+                <div class="card-body">
+                    <p class="card-text text-muted font-weight-light">{{ note.content }}</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group" role="group">
+                            <a href="{{ route('notes.edit', {'note': note.id}) }}" role="button" class="btn btn-sm btn-outline-info">Update</a>
+                            <a href="#" data-id="{{ note.id }}" role="button" class="btn btn-sm btn-outline-danger btn-del">Delete</a>
+                        </div>
+                        <small class="text-info">Updated: {{ note.updatedAt|date("m/d/Y") }}</small>
+                        <small class="text-muted">Created: {{ note.createdAt|date("m/d/Y") }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="container">{{ notes.render()|raw }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+{% block js %}
+<style>
+    .pagination > .page-item > .page-link {
+        color: #17a2b8;
+    }
+    .pagination > .active > .page-link {
+        background: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+    }
+    .pagination > li > a:focus,
+    .pagination > li > a:hover,
+    .pagination > li > span:focus,
+    .pagination > li > span:hover {
+        background: rgb(235, 235, 235);
+    }
+</style>
+<script type="text/javascript">
+    $(function() {
+        $('.pagination').addClass('pagination-sm justify-content-center').
+        children().addClass('page-item').
+        children().addClass('page-link');
+    });
+</script>
+<script src="{{ url('/static/js/delete.js') }}"></script>
+{% endblock %}

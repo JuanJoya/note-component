@@ -1,0 +1,60 @@
+{% extends "layout.twig" %}
+
+{% block title %}Create a note{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+    <div class="alert alert-light text-center mb-4" role="alert">
+        <h3 class="font-weight-light text-dark">Create a note</h3>
+        <hr>
+    </div>
+    {# @var \Illuminate\Support\Collection $authors #}
+    {# @var \Note\Domain\Author $author #}
+
+    {% if authors.isEmpty() %}
+    <div class="alert alert-warning" role="alert">
+        <strong>Oops! </strong> <span class="text-info">{{ user.fullName }}</span> does not have any author.
+    </div>
+    {% else %}
+    <div class="row justify-content-md-center">
+        <div class="col-lg-12">
+            {% if errors %}
+                {% include 'partials/errors.twig' %}
+            {% endif %}
+            <div class="alert alert-success" role="alert">
+                <strong>Please</strong> complete the form below.
+            </div>
+            <form action="{{ route('notes.store') }}" method="POST">
+                <div class="form-group">
+                    <label class="text-muted">Logged user</label>
+                    <input class="form-control" type="text" value="{{ user.fullName }}" readonly>
+                </div>
+                <div class="form-group">
+                    <input type="text" name="title" class="form-control" maxlength="50" placeholder="Title" value="{{ old.title }}" required>
+                    <small class="form-text text-muted">Required, must be 4-50 characters long, only letters, numbers and spaces.</small>
+                </div>
+                <div class="form-group">
+                    <textarea name="content" class="form-control" maxlength="200" placeholder="content" required>{{ old.content }}</textarea>
+                    <small class="form-text text-muted">Required, must be 15-200 characters long.</small>
+                </div>
+                <div class="form-group">
+                    <label class="text-muted">Select an author</label>
+                    <select name="author_id" class="form-control" required>
+                    {% for author in authors %}
+                        <option value="{{ author.id }}">{{ author.username }}</option>
+                    {% endfor %}
+                    </select>
+                    <small class="form-text text-muted">Required</small>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Create</button>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

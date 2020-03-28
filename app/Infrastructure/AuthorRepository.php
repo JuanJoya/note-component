@@ -1,88 +1,108 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Infrastructure;
 
 use Note\Domain\Author;
+use Illuminate\Support\Collection;
+use Note\Domain\User;
 
 class AuthorRepository extends BaseRepository
 {
     /**
-     * @var UserRepository instancia del repositorio de User
+     * @param string $query
+     * @return Collection
      */
-    private $userRepository;
-
-    /**
-     * @param UserRepository $userRepository
-     */
-    public function __construct(UserRepository $userRepository)
+    public function all(string $query = null): Collection
     {
-        $this->userRepository = $userRepository;
+        return parent::all(
+            "SELECT a.*, u.email FROM authors a
+             INNER JOIN users u ON u.id = a.user_id
+             ORDER BY a.id ASC"
+        );
     }
 
     /**
-     * @param Author $author
+     * @param int|string $param
+     * @param string $type
+     * @param string $query
+     * @return object|null
      */
-    public function save(Author $author)
+    public function find($param, string $type = 'id', string $query = null)
     {
-        $this->validateUser($author->getId());
-        $this->query = "INSERT INTO authors (user_id, username) VALUES (:user_id, :username)";
+        return parent::find(
+            $param,
+            $type,
+            "SELECT a.*, u.email FROM authors a
+             INNER JOIN users u ON u.id = a.user_id
+             WHERE a.{$type} = :{$type}"
+        );
+    }
+
+    /**
+     * @param array $attributes
+     * @return void
+     */
+    public function save(array $attributes): void
+    {
         $this->bindParams = [
-            ':user_id'  => $author->getId(),
-            ':username' => $author->getUsername()
+            ':user_id' => $attributes['user_id'],
+            ':username' => $attributes['username'],
+            ':slug' => $attributes['slug']
         ];
-        $this->executeSingleQuery();
+        $this->executeSingleQuery(
+            "INSERT INTO authors (user_id, username, slug) VALUES (:user_id, :username, :slug)"
+        );
     }
 
     /**
-     * @param string $userId
-     * @return \Illuminate\Support\Collection de Author
+     * @param array $attributes
+     * @return void
      */
-    public function authors($userId)
+    public function update(array $attributes): void
     {
-        $this->query = "SELECT * FROM authors WHERE user_id = :userId";
-        $this->bindParams = [':userId' => $userId];
-        $this->getResultsFromQuery();
-
-        return $this->mapToEntity($this->rows);
+        //TODO
     }
 
     /**
-     * @return string nombre de la tabla en db
+     * @param int $userId
+     * @return Collection
      */
-    protected function table()
+    public function authors(int $user_id): Collection
     {
-        return 'authors';
+        $this->bindParams = [':user_id' => $user_id];
+        $result = $this->getResultsFromQuery(
+            "SELECT a.*, u.email FROM authors a
+             INNER JOIN users u ON u.id = a.user_id
+             WHERE a.user_id = :user_id"
+        );
+        return $this->mapToEntity($result);
     }
 
     /**
-     * @param array $result datos de la db
+     * @param array $result ResultSet de la base de datos.
      * @return Author
      */
-    protected function mapEntity(array $result)
+    protected function mapEntity(array $result): Author
     {
-        $user   = $this->userRepository->find($result['user_id']);
-        $author = new Author(
-            $user->getEmail(),
-            $user->getPassword(),
-            $result['username'],
-            $result['id'],
+        $user = new User(
+            $result['email'],
             $result['user_id']
         );
-
-        $author->setName($user->getFirstName(), $user->getLastName());
-
-        return $author;
+        return new Author(
+            $user,
+            $result['username'],
+            $result['slug'],
+            $result['id']
+        );
     }
 
     /**
-     * @param string $userId
+     * @return string nombre de la tabla en la base de datos.
      */
-    private function validateUser($userId)
+    protected function table(): string
     {
-        if (!$this->userRepository->inDatabase($userId)) {
-            throw new \LogicException(
-                "This author does not have an associated user in database"
-            );
-        }
+        return 'authors';
     }
 }

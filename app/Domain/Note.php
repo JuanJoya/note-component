@@ -1,23 +1,38 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Domain;
 
 class Note
 {
     /**
-     * @var Author instancia de la clase Author
+     * @var Author
      */
     private $author;
+
     /**
-     * @var string titulo de una nota
+     * @var string
      */
     private $title;
+
     /**
-     * @var string contenido de una nota
+     * @var string
      */
     private $content;
+
     /**
-     * @var null|string id de una nota
+     * @var string
+     */
+    private $created_at;
+
+    /**
+     * @var string
+     */
+    private $updated_at;
+
+    /**
+     * @var int
      */
     private $id;
 
@@ -25,30 +40,33 @@ class Note
      * @param Author $author
      * @param string $title
      * @param string $content
-     * @param null|string $id
+     * @param string $created_at
+     * @param string $updated_at
+     * @param int $id
      */
-    public function __construct(Author $author, $title, $content, $id = null)
-    {
+    public function __construct(
+        Author $author,
+        string $title,
+        string $content,
+        string $created_at,
+        string $updated_at,
+        int $id
+    ) {
         $this->author = $author;
-        $this->setTitle($title);
-        $this->setContent($content);
+        $this->title = $title;
+        $this->content = $content;
+        $this->created_at = $created_at;
+        $this->updated_at = $updated_at;
         $this->id = $id;
     }
 
     /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
      * @param string $title
+     * @return void
      */
-    public function setTitle($title)
+    public function setTitle(string $title): void
     {
-        if(empty($title)) {
+        if (empty($title)) {
             throw new \InvalidArgumentException("Empty Title");
         }
         $this->title = $title;
@@ -57,34 +75,68 @@ class Note
     /**
      * @return string
      */
-    public function getContent()
+    public function getTitle(): string
     {
-        return $this->content;
+        return $this->title;
     }
 
     /**
      * @param string $content
+     * @return void
      */
-    public function setContent($content)
+    public function setContent(string $content): void
     {
-        if(empty($content)) {
+        if (empty($content)) {
             throw new \InvalidArgumentException("Empty Content");
         }
         $this->content = $content;
     }
 
     /**
+     * @return string
+     */
+    public function getContent(): string
+    {
+        return $this->content;
+    }
+
+    /**
      * @return Author
      */
-    public function getAuthor()
+    public function getAuthor(): Author
     {
         return $this->author;
     }
 
     /**
-     * @return null|string
+     * @return string
      */
-    public function getId()
+    public function getCreatedAt(): string
+    {
+        return $this->created_at;
+    }
+
+    /**
+     * @param string $timestamp
+     * @return void
+     */
+    public function setUpdatedAt(string $timestamp): void
+    {
+        $this->updated_at = $timestamp;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdatedAt(): string
+    {
+        return $this->updated_at;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }

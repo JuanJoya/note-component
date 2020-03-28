@@ -1,73 +1,73 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Domain;
 
-class Author extends User
+class Author
 {
     /**
-     * @var string seudónimo de un Author
+     * @var User usuario creador del autor.
      */
-    protected $username;
-    /**
-     * @var null|string id de un Author
-     */
-    protected $authorId;
+    private $user;
 
     /**
-     * @param string $email correo del User
-     * @param string $password contraseña del User
-     * @param string $username
-     * @param null|string $authorId
-     * @param null|string $userId
+     * @var string seudónimo de un autor.
      */
-    public function __construct($email, $password, $username, $authorId = null, $userId = null)
-    {
-        parent::__construct($email, $password, $userId);
-        $this->setUsername($username);
-        $this->authorId = $authorId;
-    }
+    private $username;
+
+    /**
+     * @var string slug formado por el seudónimo.
+     */
+    private $slug;
+
+    /**
+     * @var int id identificador de un autor.
+     */
+    private $id;
 
     /**
      * @param User $user
      * @param string $username
-     * @param null|string $authorId
-     * @return Author
+     * @param int $id
      */
-    public static function create(User $user, $username, $authorId = null)
+    public function __construct(User $user, string $username, string $slug, int $id)
     {
-        return new Author(
-            $user->getEmail(),
-            $user->getPassword(),
-            $username,
-            $authorId,
-            $user->getId()
-        );
+        $this->user = $user;
+        $this->username = $username;
+        $this->slug = $slug;
+        $this->id = $id;
     }
 
     /**
-     * @param string $username
+     * @return User
      */
-    public function setUsername($username)
+    public function getUser(): User
     {
-        if(empty($username)) {
-            throw new \InvalidArgumentException("Empty UserName");
-        }
-        $this->username = $username;
+        return $this->user;
     }
 
     /**
      * @return string
      */
-    public function getUsername()
+    public function getUsername(): string
     {
         return $this->username;
     }
 
     /**
-     * @return null|string
+     * @return string
      */
-    public function getAuthorId()
+    public function getSlug(): string
     {
-        return $this->authorId;
+        return $this->slug;
+    }
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
     }
 }

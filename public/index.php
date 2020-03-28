@@ -1,30 +1,17 @@
 <?php
 
-use Illuminate\Container\Container;
-use Illuminate\Http\Request;
-use Note\Application;
-use Note\Http\Controllers\BaseController;
-
 /**
- * llama el autoload de composer bajo el estándar psr-4
+ * Este proyecto es una prueba de conceptos, parte de una sencilla aplicación
+ * para la gestión de notas, la idea es construir un entorno para testear las
+ * vulnerabilidades típicas en una aplicación web (SQL Injection, XSS, CSRF).
+ * También se pone en practica conceptos básicos de un framework (Auth, Error
+ * Handler, IoC Container, Request, Response, Router, Sessions, Template Engine,
+ * Validation)
+ *
+ * @author Juan David Joya <ing.juanjoya@outlook.com>
+ * @license MIT
  */
-require_once __DIR__ . '/../vendor/autoload.php';
 
-/**
- * Permite habilitar o deshabilitar la notificación de errores
- */
-ini_set('display_errors', 'on');
-error_reporting(E_ALL);
+declare(strict_types=1);
 
-/**
- * URL = url utilizada para servir archivos estáticos
- */
-define('URL', "http://localhost/Proyectos/note-component/public");
-
-$container  = new Container();
-$dispatcher = new \Illuminate\Events\Dispatcher($container);
-$router     = new \Illuminate\Routing\Router($dispatcher, $container);
-$request    = Request::capture();
-BaseController::setRequest($request);
-
-Application::build($container, $request, $router);
+require dirname(__DIR__) . '/app/bootstrap.php';

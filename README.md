@@ -1,24 +1,22 @@
-# Php Component Test
+# Note Component
 
-Para generar el proyecto:
-````
-composer install
-````
-Para correr los tests
-````
-[global]  phpunit --bootstrap vendor/autoload.php tests
-[local]     ./vendor/bin/phpunit tests
-````
-Para servir archivos estáticos
-````
-Utilizar apache, configurar constante de directorio en public/index.php
-````
-Para correr el server
-````
-php -S localhost:8000 public\index.php
-````
-Parámetros de configuración:
-````
-URL - constante en public/index.php
-variables de conexión con la DB en app/Infrastructure/Database
-````
+Este proyecto es una prueba de conceptos, parte de una sencilla aplicación para la gestión de notas, la idea es construir un entorno para testear las vulnerabilidades típicas en una aplicación web (SQL Injection, XSS, CSRF). También se pone en practica conceptos básicos de un framework (Auth, Error Handler, IoC Container, Request, Response, Router, Sessions, Template Engine, Validation).
+
+---
+Project Dependencies:
+```sh
+$ composer install
+```
+PSR12 Validate:
+```sh
+$ ./vendor/bin/phpcs --colors --report=code --standard=psr12  app/
+```
+HTTP Server:
+```sh
+$ cd public/
+$ php -S localhost:8000
+#or
+$ php -S localhost:8000 -t public/ server.php
+#or
+$ ./run.sh
+```

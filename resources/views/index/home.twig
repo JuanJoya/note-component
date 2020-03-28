@@ -1,0 +1,84 @@
+{% extends "layout.twig" %}
+
+{% block title %}Home{% endblock %}
+{% block content %}
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading font-weight-light text-info">Note Component App</h1>
+        <p class="lead text-muted">Simple php application for notes management</p>
+        <p><a href="{{ route('notes.create') }}" class="btn btn-primary my-2">Create a Note</a></p>
+    </div>
+</section>
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            {% if request().is('author/*') %}
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Author</li>
+            {% else %}
+            <li class="breadcrumb-item active" aria-current="page">Home</li>
+            {% endif %}
+        </ol>
+    </nav>
+    {{ flash()|raw }}
+    {# @var notes \Illuminate\Support\Collection #}
+    {# @var note \Note\Domain\Note #}
+    
+    {% if notes.isEmpty() %}
+    <div class="alert alert-warning mx-auto" role="alert">
+        <h5 class="alert-heading">
+            <strong>Oops! </strong><span class="font-weight-light">there is nothing here.</span>
+        </h5>
+        <hr>
+        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam illo nobis minima incidunt, reiciendis itaque doloribus aspernatur eos? Ipsa, tempore.</p>
+    </div>
+    {% else %}
+    <div class="row">
+        {% for note in notes %}
+        <div class="col-lg-6 py-3">
+            <div class="card">
+                <h6 class="card-header text-light bg-info">{{ note.title }}</h6>
+                <div class="card-body">
+                    <p class="card-text text-muted font-weight-light">{{ note.content }}</p>
+                </div>
+                <div class="card-footer bg-white">
+                    <div class="text-muted d-flex justify-content-between align-items-center">
+                        <small>
+                            by <a class="text-info" href="{{ route('author.notes', {'slug': note.author.slug}) }}">{{ note.author.username }}</a>
+                        </small>
+                        <small>{{ note.createdAt|date("m/d/Y") }}</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="container">{{ notes.render()|raw }}</div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
+{% block js %}
+<style>
+    .pagination > .page-item > .page-link {
+        color: #17a2b8;
+    }
+    .pagination > .active > .page-link {
+        background: #17a2b8;
+        border-color: #17a2b8;
+        color: white;
+    }
+    .pagination > li > a:focus,
+    .pagination > li > a:hover,
+    .pagination > li > span:focus,
+    .pagination > li > span:hover {
+        background: rgb(235, 235, 235);
+    }
+</style>
+<script type="text/javascript">
+    $(function() {
+        $('.pagination').addClass('justify-content-center').
+        children().addClass('page-item').
+        children().addClass('page-link');
+    });
+</script>
+{% endblock %}

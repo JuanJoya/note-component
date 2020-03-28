@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Note\Infrastructure;
 
 use Note\Domain\User;
@@ -7,43 +9,47 @@ use Note\Domain\User;
 class UserRepository extends BaseRepository
 {
     /**
-     * @param User $user
+     * @param array $attributes
+     * @return void
      */
-    public function save(User $user)
+    public function save(array $attributes): void
     {
-        $this->query = "INSERT INTO users
-                          (email, password, first_name, last_name)
-                        VALUES
-                          (:email, :password, :first_name, :last_name)";
         $this->bindParams = [
-            ':email'      => $user->getEmail(),
-            ':password'   => password_hash($user->getPassword(), PASSWORD_DEFAULT),
-            ':first_name' => $user->getFirstName(),
-            ':last_name'  => $user->getLastName()
+            ':email'      => $attributes['email'],
+            ':password'   => password_hash($attributes['password'], PASSWORD_DEFAULT)
         ];
-        $this->executeSingleQuery();
+        $this->executeSingleQuery(
+            "INSERT INTO users (email, password)
+             VALUES (:email, :password)"
+        );
     }
-
+    
     /**
-     * @param array $result datos de la db
+     * @param array $attributes
+     * @return void
+     */
+    public function update(array $attributes): void
+    {
+        //TODO
+    }
+    
+    /**
+     * @param array $result ResultSet de la base de datos.
      * @return User
      */
-    protected function mapEntity(array $result)
+    protected function mapEntity(array $result): User
     {
-        $user = new User(
+        return new User(
             $result['email'],
-            $result['password'],
-            $result['id']
+            $result['id'],
+            $result['password']
         );
-        $user->setName($result['first_name'], $result['last_name']);
-
-        return $user;
     }
 
     /**
-     * @return string nombre de la tabla en db
+     * @return string nombre de la tabla en la base de datos.
      */
-    protected function table()
+    protected function table(): string
     {
         return 'users';
     }
