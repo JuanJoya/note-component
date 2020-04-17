@@ -22,8 +22,8 @@ class HomeController extends BaseController
 
     public function index(View $view)
     {
-        $notes = $this->notes->all();
-        return $view->make('index.home', ['notes' => $this->paginate($notes, 10)]);
+        $notes = $this->notes->paginate(10);
+        return $view->make('index.home', ['notes' => $notes]);
     }
 
     public function show(string $slug, View $view, AuthorService $authors)

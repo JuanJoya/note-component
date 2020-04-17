@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace Note\Domain\Services;
 
 use Illuminate\Support\Collection;
+use Note\Src\Database\CanPaginate;
 use Note\Infrastructure\BaseRepository;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 abstract class BaseService
 {
+    use CanPaginate;
+
     /**
      * @return Collection
      */
@@ -42,6 +45,27 @@ abstract class BaseService
         return $this->throwOnNull(
             $this->repository()->find($id)
         );
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->repository()->count();
+    }
+
+    /**
+     * @param int $perPage
+     * @param array $appends
+     * @return Collection
+     */
+    public function paginate(int $perPage = 10, array $appends = []): Collection
+    {
+        $pages = $this->getPaginator($perPage, $this->repository()->count());
+        $items = $this->repository()->limit($pages->get_start(), $perPage);
+        $items->macro('links', $this->getLinksMethod($pages, $appends));
+        return $items;
     }
 
     /**

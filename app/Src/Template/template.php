@@ -7,8 +7,8 @@
 
 declare(strict_types=1);
 
-use Note\Src\Template\{TemplateEngine, Twig\Twig, Twig\TwigFactory};
-use Twig\Environment;
+use Note\Src\Template\{TemplateEngine, Twig\Twig};
+use Twig\Loader\{FilesystemLoader, LoaderInterface};
 
 /**
  * El método 'bind' le indica al contenedor, el contrato y la implementación
@@ -20,8 +20,8 @@ $container->bind(TemplateEngine::class, Twig::class);
 /**
  * El método 'bind' no se limita a resolver interfaces, es de utilidad para
  * enseñarle al contenedor como resolver un objeto concreto que necesita
- * cierta preparación, una clase tipo Factory puede ser de utilidad.
+ * cierta preparación.
  */
-$container->bind(Environment::class, function ($container) {
-    return $container->make(TwigFactory::class)->environment();
+$container->bind(LoaderInterface::class, function ($container) {
+    return new FilesystemLoader(ROOT_PATH . '/resources/views');
 });

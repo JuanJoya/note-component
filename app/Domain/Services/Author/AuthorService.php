@@ -32,6 +32,20 @@ interface AuthorService
     public function findOrFail(int $id);
 
     /**
+     * Retorna la cantidad total de autores.
+     * @return int
+     */
+    public function count(): int;
+
+    /**
+     * Permite paginar un conjunto de autores.
+     * @param int $perPage numero de elementos por pagina.
+     * @param array $appends agrega parámetros al QueryString.
+     * @return Collection elementos de la pagina actual.
+     */
+    public function paginate(int $perPage = 10, array $appends = []): Collection;
+
+    /**
      * Permite guardar autores en los registros de la aplicación.
      * @param array $attributes
      * @return void

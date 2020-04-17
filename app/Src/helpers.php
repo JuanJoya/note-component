@@ -8,7 +8,7 @@
 
 declare(strict_types=1);
 
-use phpDocumentor\Reflection\DocBlock\Tags\Return_;
+use Note\Src\Auth\Authenticator;
 
 if (!function_exists('cleanUrl')) {
     /**
@@ -170,7 +170,7 @@ if (!function_exists('guest')) {
      */
     function guest(): bool
     {
-        return \Note\Src\Auth\Auth::guest();
+        return !session()->has(Authenticator::SESSION_AUTH);
     }
 }
 

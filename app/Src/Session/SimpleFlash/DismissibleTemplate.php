@@ -4,12 +4,9 @@ declare(strict_types=1);
 
 namespace Note\Src\Session\SimpleFlash;
 
-use Tamtamchik\SimpleFlash\{TemplateInterface, Templates\Bootstrap3Template};
+use Tamtamchik\SimpleFlash\{TemplateInterface, Templates\BootstrapTemplate};
 
-/**
- * Uses default Bootstrap 4 markdown for flash messages.
- */
-class DismissibleTemplate extends Bootstrap3Template implements TemplateInterface
+class DismissibleTemplate extends BootstrapTemplate implements TemplateInterface
 {
     protected $prefix  = '';
     protected $postfix = '';

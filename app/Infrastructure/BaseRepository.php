@@ -10,32 +10,51 @@ use Note\Src\Database\SimpleQuery;
 abstract class BaseRepository extends SimpleQuery
 {
     /**
-     * @param string $query
      * @return Collection
      */
-    public function all(string $query = null): Collection
+    public function all(): Collection
     {
         return $this->mapToEntity(
-            $this->getResultsFromQuery($query ?? "SELECT * FROM {$this->table()}")
+            $this->getResultsFromQuery($this->allQuery())
         );
     }
 
     /**
      * @param int|string $param
      * @param string $type
-     * @param string $query
      * @return Collection|object|null
      */
-    public function find($param, string $type = 'id', string $query = null)
+    public function find($param, string $type = 'id')
     {
         $this->bindParams = [":{$type}" => $param];
-        $result = $this->getResultsFromQuery($query ?? "SELECT * FROM {$this->table()} WHERE {$type} = :{$type}");
-
+        $result = $this->getResultsFromQuery($this->findQuery($type));
         if (!empty($result)) {
             return (count($result) > 1)
             ? $this->mapToEntity($result)
             : $this->mapEntity(array_shift($result));
         }
+    }
+
+    /**
+     * @param int $skip
+     * @param int $max
+     * @return Collection
+     */
+    public function limit(int $skip, int $max): Collection
+    {
+        $this->bindParams = ['skip' => $skip, 'max' => $max];
+        return $this->mapToEntity(
+            $this->getResultsFromQuery($this->allQuery() . " LIMIT :skip, :max")
+        );
+    }
+
+    /**
+     * @return int
+     */
+    public function count(): int
+    {
+        $result = $this->getResultsFromQuery("SELECT COUNT(id) AS total FROM {$this->table()}");
+        return array_shift($result)['total'];
     }
 
     /**
@@ -70,6 +89,25 @@ abstract class BaseRepository extends SimpleQuery
             );
         }
         return $collection;
+    }
+
+    /**
+     * Query genérica para traer todos los registros.
+     * @return string
+     */
+    protected function allQuery(): string
+    {
+        return "SELECT * FROM {$this->table()} ORDER BY id DESC";
+    }
+
+    /**
+     * Query genérica para traer registros específicos.
+     * @param string $type
+     * @return string
+     */
+    protected function findQuery(string $type): string
+    {
+        return "SELECT * FROM {$this->table()} WHERE {$type} = :{$type}";
     }
 
     /**

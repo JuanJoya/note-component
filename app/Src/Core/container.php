@@ -5,7 +5,7 @@
  * simples, se le explica como resolver una dependencia.
  * @see http://fabien.potencier.org/what-is-dependency-injection.html
  * Documentación del contenedor.
- * @see https://laravel.com/api/5.1/Illuminate/Container/Container.html
+ * @see https://laravel.com/api/6.x/Illuminate/Container/Container.html
  */
 
 declare(strict_types=1);
@@ -24,22 +24,22 @@ Container::setInstance($container);
 /**
  * Configuración del objeto Session.
  */
-require __DIR__ . '/Session/session.php';
+require dirname(__DIR__) . '/Session/session.php';
 
 /**
  * Definición del objeto Request.
  */
-require __DIR__ . '/Request/request.php';
+require dirname(__DIR__) . '/Request/request.php';
 
 /**
  * Definición del router de la aplicación.
  */
-require __DIR__ . '/Router/router.php';
+require dirname(__DIR__) . '/Router/router.php';
 
 /**
  * Configuración del Template Engine.
  */
-require __DIR__ . '/Template/template.php';
+require dirname(__DIR__) . '/Template/template.php';
 
 /**
  * Este método le indica al container que implementación debe utilizar.

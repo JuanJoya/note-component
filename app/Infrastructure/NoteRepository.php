@@ -10,40 +10,6 @@ use Illuminate\Support\Collection;
 class NoteRepository extends BaseRepository
 {
     /**
-     * @param string $query
-     * @return Collection
-     */
-    public function all(string $query = null): Collection
-    {
-        return parent::all(
-            "SELECT n.*, a.username, a.slug, a.user_id, u.email
-             FROM notes n
-             INNER JOIN authors a ON a.id = n.author_id
-             INNER JOIN users u ON u.id = a.user_id
-             ORDER BY n.id ASC"
-        );
-    }
-
-    /**
-     * @param int|string $param
-     * @param string $type
-     * @param string $query
-     * @return object|null
-     */
-    public function find($param, string $type = 'id', string $query = null)
-    {
-        return parent::find(
-            $param,
-            $type,
-            "SELECT n.*, a.username, a.slug, a.user_id, u.email
-             FROM notes n
-             INNER JOIN authors a ON a.id = n.author_id
-             INNER JOIN users u ON u.id = a.user_id
-             WHERE n.{$type} = :{$type}"
-        );
-    }
-
-    /**
      * @param array $attributes
      * @return void
      */
@@ -94,11 +60,9 @@ class NoteRepository extends BaseRepository
             ':title'   => $query
         ];
         $result = $this->getResultsFromQuery(
-            "SELECT n.*, a.username, a.slug, a.user_id, u.email
-             FROM notes n
-             INNER JOIN authors a ON a.id = n.author_id
-             INNER JOIN users u ON u.id = a.user_id
-             WHERE n.content LIKE :content OR n.title LIKE :title"
+            $this->selectQuery() .
+            "WHERE n.content LIKE :content OR n.title LIKE :title
+             ORDER BY n.updated_at DESC"
         );
         return $this->mapToEntity($result);
     }
@@ -111,11 +75,8 @@ class NoteRepository extends BaseRepository
     {
         $this->bindParams = [':author_id' => $author_id];
         $result = $this->getResultsFromQuery(
-            "SELECT n.*, a.username, a.slug, a.user_id, u.email
-             FROM notes n
-             INNER JOIN authors a ON a.id = n.author_id
-             INNER JOIN users u ON u.id = a.user_id
-             WHERE n.author_id = :author_id
+            $this->selectQuery() .
+            "WHERE n.author_id = :author_id
              ORDER BY n.updated_at DESC"
         );
         return $this->mapToEntity($result);
@@ -156,12 +117,40 @@ class NoteRepository extends BaseRepository
     }
 
     /**
+     * @return string
+     */
+    protected function allQuery(): string
+    {
+        return $this->selectQuery() . 'ORDER BY n.id DESC';
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    protected function findQuery(string $type): string
+    {
+        return $this->selectQuery() . "WHERE n.{$type} = :{$type} ORDER BY n.id DESC";
+    }
+
+    /**
+     * @return string
+     */
+    private function selectQuery(): string
+    {
+        return "SELECT n.*, a.username, a.slug, a.user_id, u.email
+                FROM notes n
+                INNER JOIN authors a ON a.id = n.author_id
+                INNER JOIN users u ON u.id = a.user_id ";
+    }
+
+    /**
      * @param int $note_id
      */
-    private function validateNote(int $note_id)
+    private function validateNote(int $note_id): void
     {
         if (!$this->inDatabase($note_id)) {
-            throw new \RuntimeException("This note is not stored in database");
+            throw new \RuntimeException('This note is not stored in database');
         }
     }
 }

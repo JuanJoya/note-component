@@ -12,13 +12,18 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpFoundation\Response;
 use Note\Src\Response\Html;
 
+/**
+ * Permite deshabilitar cualquier error|exception output.
+ */
+ini_set('display_errors', getenv('APP_DEBUG') ? 'on' : 'off');
+
 $whoops = new ErrorHandler();
 
 /**
- * Se verifica con la constante APP_DEBUG si la aplicación esta en
+ * Se verifica con la variable de entorno [APP_DEBUG] si la aplicación esta en
  * modo (true)Desarrollo o (false|null)Producción.
  */
-if (APP_DEBUG) {
+if (getenv('APP_DEBUG')) {
     /**
      * PrettyPageHandler permite ver en detalle cualquier excepción|error de la aplicación.
      */
@@ -40,5 +45,4 @@ if (APP_DEBUG) {
 /**
  * Se registra la instancia como error handler de la aplicación.
  */
-
 $whoops->register();

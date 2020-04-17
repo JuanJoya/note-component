@@ -92,4 +92,13 @@ class User
     {
         return substr($this->getId() . '#' . $this->getEmail(), 0, 15);
     }
+
+    /**
+     * Propiedades del objeto a serializar.
+     * @return array
+     */
+    public function __sleep(): array
+    {
+        return ['email', 'id'];
+    }
 }

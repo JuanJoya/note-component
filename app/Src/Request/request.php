@@ -2,7 +2,7 @@
 
 /**
  * Este archivo permite configurar el objeto Request de la aplicación.
- * @see https://laravel.com/api/5.1/Illuminate/Http/Request.html
+ * @see https://laravel.com/api/6.x/Illuminate/Http/Request.html
  */
 
 declare(strict_types=1);
@@ -15,14 +15,14 @@ use Illuminate\Http\Request;
 $request = Request::capture();
 
 /**
- * Se agrega el objeto de sesiones para obtenerlo con la instancia del Request.
- * @var Symfony\Component\HttpFoundation\Session\Session $session.
+ * Se agrega el objeto Session para obtenerlo con la instancia del Request.
+ * @var Symfony\Component\HttpFoundation\Session\Session $session
  */
 $request->setSession($session);
 
 /**
  * Se agrega la instancia al contenedor de dependencias para compartir el mismo
  * Request por toda la aplicación.
- * @var \Illuminate\Container\Container $container.
+ * @var \Illuminate\Container\Container $container
  */
 $container->instance(Request::class, $request);

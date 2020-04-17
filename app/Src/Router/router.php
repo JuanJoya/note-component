@@ -1,9 +1,8 @@
 <?php
 
 /**
- * En este archivo se incluye la lógica asociada a la construcción del Router,
- * las rutas y sus filtros.
- * @see https://laravel.com/api/5.1/Illuminate/Routing/Router.html
+ * En este archivo se incluye la lógica asociada a la construcción del Router.
+ * @see https://laravel.com/api/6.x/Illuminate/Routing/Router.html
  */
 
 declare(strict_types=1);
@@ -15,8 +14,8 @@ use Illuminate\Routing\{Redirector, Router, UrlGenerator};
  * El objeto Dispatcher se utiliza (en laravel) básicamente para registrar y
  * disparar un evento asociado a su respectivo listener, el objeto Router lo
  * utiliza para despachar|ejecutar un Request y obtener un Response.
- * @see https://laravel.com/api/5.1/Illuminate/Events/Dispatcher.html
- * @var \Illuminate\Container\Container $container.
+ * @see https://laravel.com/api/6.x/Illuminate/Events/Dispatcher.html
+ * @var \Illuminate\Container\Container $container
  */
 $dispatcher = new Dispatcher($container);
 
@@ -25,7 +24,7 @@ $dispatcher = new Dispatcher($container);
  * Controllers|Callbacks asociados a una ruta.
  */
 $router = new Router($dispatcher, $container);
- 
+
 /**
  * El archivo 'routes.php' contiene la definición de las rutas de la aplicación,
  * se incluye dentro de una función anónima para limitar el scope del 'require'
@@ -36,23 +35,21 @@ $router = new Router($dispatcher, $container);
 })();
 
 /**
- * El archivo 'filters.php' contiene la definición de los filtros asociados a las
- * rutas de la aplicación, un filtro es una version primitiva de un middleware.
+ * @see https://github.com/laravel/framework/issues/19020
  */
-(function () use ($router) {
-    require __DIR__ . '/filters.php';
-})();
+$router->getRoutes()->refreshNameLookups();
+$router->getRoutes()->refreshActionLookups();
 
 /**
  * Este objeto es de utilidad a la hora de manipular las rutas de la aplicación.
- * @see https://laravel.com/api/5.1/Illuminate/Routing/UrlGenerator.html
+ * @see https://laravel.com/api/6.x/Illuminate/Routing/UrlGenerator.html
  */
 $url = new UrlGenerator($router->getRoutes(), $request);
 
 /**
  * El objeto Redirector permite crear diferentes tipos de redirección en base
  * a las rutas de la aplicación.
- * @see https://laravel.com/api/5.1/Illuminate/Routing/Redirector.html
+ * @see https://laravel.com/api/6.x/Illuminate/Routing/Redirector.html
  */
 $redirect = new Redirector($url);
 

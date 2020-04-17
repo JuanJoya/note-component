@@ -30,7 +30,7 @@ class View
     public function __construct(Response $response, TemplateEngine $engine)
     {
         $this->response = $response;
-        $this->engine   = $engine;
+        $this->engine = $engine;
     }
 
     /**
@@ -45,7 +45,6 @@ class View
         $this->response->setContent(
             $this->engine->render($template, $params)
         );
-
         return $this->response;
     }
 }

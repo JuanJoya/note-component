@@ -24,6 +24,7 @@ class Twig implements TemplateEngine
     public function __construct(Environment $engine)
     {
         $this->engine = $engine;
+        $this->addExtensions();
     }
 
     /**
@@ -35,5 +36,14 @@ class Twig implements TemplateEngine
     public function render(string $template, array $data = []): string
     {
         return $this->engine->render(normalizeName($template, 'twig'), $data);
+    }
+    
+    /**
+     * Permite registrar extensiones para ampliar la funcionalidad del Engine.
+     * @return void
+     */
+    private function addExtensions(): void
+    {
+        $this->engine->addExtension(new TwigExtension());
     }
 }

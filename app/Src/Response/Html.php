@@ -44,8 +44,8 @@ class Html
      */
     public function __construct(string $template, array $params = [], bool $withLayout = true)
     {
-        $this->template   = normalizeName($template);
-        $this->params     = $params;
+        $this->template = normalizeName($template);
+        $this->params = $params;
         $this->withLayout = $withLayout;
     }
 
@@ -94,7 +94,6 @@ class Html
         } elseif (!file_exists($this->getTemplateFileName())) {
             throw new \RuntimeException("Template file for: [{$this->template}] is missing.");
         }
-
         return $this->includeTemplateFromFile();
     }
 

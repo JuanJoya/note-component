@@ -11,17 +11,17 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 /**
  * Esta clase permite gestionar el tema de la autenticación de usuarios.
  */
-class BasicAuth extends Auth implements Authenticator
+class BasicAuth implements Authenticator
 {
-    /**
-     * @var UserService
-     */
-    private $users;
-
     /**
      * @var SessionInterface
      */
     private $session;
+
+    /**
+     * @var UserService
+     */
+    private $users;
 
     /**
      * @var Flash
@@ -29,14 +29,14 @@ class BasicAuth extends Auth implements Authenticator
     private $flash;
 
     /**
-     * @param UserService $users
      * @param SessionInterface $session
+     * @param UserService $users
      * @param Flash $flash
      */
-    public function __construct(UserService $users, SessionInterface $session, Flash $flash)
+    public function __construct(SessionInterface $session, UserService $users, Flash $flash)
     {
-        $this->users = $users;
         $this->session = $session;
+        $this->users = $users;
         $this->flash = $flash;
     }
 
@@ -84,5 +84,23 @@ class BasicAuth extends Auth implements Authenticator
             return true;
         }
         return false;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return bool
+     */
+    public function check(): bool
+    {
+        return $this->session->has(self::SESSION_AUTH);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return bool
+     */
+    public function guest(): bool
+    {
+        return !$this->session->has(self::SESSION_AUTH);
     }
 }

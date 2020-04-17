@@ -1,7 +1,7 @@
 #! /bin/bash
 
 DOCROOT="$(pwd)/public"
-SERVER="server.php"
+SERVER="$(pwd)/server.php"
 HOST=127.0.0.1
 PORT=8000
 MYSQl=$(which mysql)
@@ -14,7 +14,5 @@ elif [[ $MYSQL -ne 0 ]] ; then
 echo "Unable to find MYSQL"
 exit 1
 fi
-
-echo $?
 
 $PHP -S $HOST:$PORT -t $DOCROOT $SERVER

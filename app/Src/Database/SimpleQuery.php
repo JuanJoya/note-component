@@ -7,31 +7,6 @@ namespace Note\Src\Database;
 class SimpleQuery
 {
     /**
-     * @var string
-     */
-    private static $dbDriver = 'mysql';
-    
-    /**
-     * @var string
-     */
-    private static $dbHost = 'localhost';
-
-    /**
-     * @var string
-     */
-    private static $dbUser = 'root';
-
-    /**
-     * @var string
-     */
-    private static $dbPass = '';
-
-    /**
-     * @var string
-     */
-    private static $dbName = 'note_component';
-
-    /**
      * @var \PDO objeto que permite trabajar con la DB.
      */
     private static $conn;
@@ -48,11 +23,9 @@ class SimpleQuery
      */
     public function executeSingleQuery(string $query): int
     {
-        $this->openConnection();
         $stm = $this->execute($query);
         $affectedRows = $stm->rowCount();
         $stm = null;
-        
         return $affectedRows;
     }
 
@@ -63,11 +36,9 @@ class SimpleQuery
      */
     public function getResultsFromQuery(string $query): array
     {
-        $this->openConnection();
         $stm = $this->execute($query);
         $result = $stm->fetchAll();
         $stm = null;
-        
         return $result;
     }
 
@@ -78,12 +49,12 @@ class SimpleQuery
      */
     private function execute(string $query): \PDOStatement
     {
+        $this->openConnection();
         $stm = self::$conn->prepare($query);
         foreach ($this->bindParams as $key => &$param) {
             $stm->bindParam($key, $param, pdoType($param));
         }
         $stm->execute();
-
         return $stm;
     }
 
@@ -102,20 +73,11 @@ class SimpleQuery
                 \PDO::ATTR_EMULATE_PREPARES => false //for mysqlnd driver
             ];
             self::$conn = new \PDO(
-                self::$dbDriver . ':host=' . self::$dbHost . ';dbname=' . self::$dbName . ';charset=utf8;',
-                self::$dbUser,
-                self::$dbPass,
+                'mysql:host=' . getenv('DB_HOST') . ';dbname=' . getenv('DB_NAME') . ';charset=utf8;',
+                getenv('DB_USER'),
+                getenv('DB_PASS'),
                 $opt
             );
         }
-    }
-
-    /**
-     * @param string $name
-     * @return void
-     */
-    public static function setDatabaseName(string $name): void
-    {
-        self::$dbName = $name;
     }
 }

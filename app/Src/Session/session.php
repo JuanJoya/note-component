@@ -7,9 +7,10 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Str;
+use Tamtamchik\SimpleFlash\Flash;
 use Note\Src\Session\SimpleFlash\DismissibleTemplate;
 use Symfony\Component\HttpFoundation\Session\{Session, SessionInterface, Storage\NativeSessionStorage};
-use Tamtamchik\SimpleFlash\Flash;
 
 /**
  * Se deshabilita la lectura de cookies desde JavaScript para evitar Session Hijacking.
@@ -26,7 +27,7 @@ $session->start();
 /**
  * Se establece un token para validar request POST contra ataques CSRF.
  */
-$session->has('_token') ?: $session->set('_token', str_random(40));
+$session->has('_token') ?: $session->set('_token', Str::random(40));
 
 /**
  * Se agrega la instancia al contenedor de dependencias para compartir la misma sesión
