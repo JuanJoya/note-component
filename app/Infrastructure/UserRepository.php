@@ -14,10 +14,10 @@ class UserRepository extends BaseRepository
      */
     public function save(array $attributes): void
     {
-        $this->bindParams = [
+        $this->bindParams([
             ':email'    => $attributes['email'],
             ':password' => password_hash($attributes['password'], PASSWORD_DEFAULT)
-        ];
+        ]);
         $this->executeSingleQuery(
             "INSERT INTO users (email, password)
              VALUES (:email, :password)"

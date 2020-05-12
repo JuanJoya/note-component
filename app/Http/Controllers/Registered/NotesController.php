@@ -60,7 +60,7 @@ class NotesController extends BaseController
         $validator->add([
             'title:Title' => 'required | AlphaNumHyphen | minlength(4) | maxlength(50)',
             'content:Content' => 'required | minlength(15) | maxlength(200)',
-            'author_id:Author' => "required | integer"
+            'author_id:Author' => "required | integer | exists(authors)"
         ]);
         if ($validator->validate($request->all())) {
             $this->authors->validate($request->author_id, $this->currentUser()->getId());
@@ -85,7 +85,7 @@ class NotesController extends BaseController
     public function show(int $author_id)
     {
         $author = $this->authors->validate($author_id, $this->currentUser()->getId());
-        $notes  = $this->paginate($this->notes->authorNotes($author_id), 4);
+        $notes = $this->paginate($this->notes->authorNotes($author_id), 4);
         return $this->view->make('notes.show', compact('notes', 'author'));
     }
 
@@ -105,7 +105,7 @@ class NotesController extends BaseController
         if ($validator->validate($request->all())) {
             $note = $this->notes->findOrFail($id);
             $author = $this->authors->validate($note->getAuthor(), $this->currentUser()->getId());
-            $request->merge(['updated_at' => date('Y-m-d H:i:s'), 'id' => $note->getId()]);
+            $request->merge(['id' => $note->getId()]);
             $this->notes->update($request->all());
             simpleFlash('The note has been successfully updated.', 'success');
             return $redirect->route('notes.show', ['author' => $author->getId()]);
@@ -128,13 +128,10 @@ class NotesController extends BaseController
     }
 
     /**
-     * @return \Note\Domain\User|null
+     * @return \Note\Domain\User
      */
     private function currentUser()
     {
-        return $this->users->findOrFail(
-            //request()->getSession()->get('user_id')
-            2
-        );
+        return $this->users->findOrFail(2);
     }
 }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Note\Src\Auth;
 
-use Tamtamchik\SimpleFlash\Flash;
+use Note\Domain\User;
 use Note\Domain\Services\User\UserService;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Esta clase permite gestionar el tema de la autenticación de usuarios.
+ * Esta clase permite gestionar la autenticación de usuarios.
  */
 class BasicAuth implements Authenticator
 {
@@ -24,20 +24,13 @@ class BasicAuth implements Authenticator
     private $users;
 
     /**
-     * @var Flash
-     */
-    private $flash;
-
-    /**
      * @param SessionInterface $session
      * @param UserService $users
-     * @param Flash $flash
      */
-    public function __construct(SessionInterface $session, UserService $users, Flash $flash)
+    public function __construct(SessionInterface $session, UserService $users)
     {
         $this->session = $session;
         $this->users = $users;
-        $this->flash = $flash;
     }
 
     /**
@@ -52,8 +45,7 @@ class BasicAuth implements Authenticator
         if ($user) {
             if (password_verify($password, $user->getPassword())) {
                 $this->session->migrate();
-                $this->session->set(self::SESSION_AUTH, $user->getId());
-                $this->flash->message('Welcome back!');
+                $this->session->set(self::SESSION_AUTH, serialize($user));
                 return true;
             }
         }
@@ -79,8 +71,7 @@ class BasicAuth implements Authenticator
         $user = $this->users->create($data);
         if ($user) {
             $this->session->migrate();
-            $this->session->set(self::SESSION_AUTH, $user->getId());
-            $this->flash->message('Registration successful!');
+            $this->session->set(self::SESSION_AUTH, serialize($user));
             return true;
         }
         return false;
@@ -102,5 +93,17 @@ class BasicAuth implements Authenticator
     public function guest(): bool
     {
         return !$this->session->has(self::SESSION_AUTH);
+    }
+
+    /**
+     * {@inheritdoc}
+     * @return User
+     */
+    public function user(): User
+    {
+        if ($this->guest()) {
+            throw new \RuntimeException("No user is currently signed in!");
+        }
+        return unserialize($this->session->get(self::SESSION_AUTH));
     }
 }

@@ -86,8 +86,8 @@ if (!function_exists('escapeLike')) {
      */
     function escapeLike(string $string): string
     {
-        $search = array( '\\', '%', '_');
-        $replace = array('\\\\\\', '\%', '\_');
+        $search = ['\\', '%', '_'];
+        $replace = ['\\\\\\', '\%', '\_'];
         return str_replace($search, $replace, $string);
     }
 }
@@ -116,6 +116,20 @@ if (!function_exists('pdoType')) {
                 break;
         }
         return $type;
+    }
+}
+
+if (!function_exists('debug')) {
+    /**
+     * Interrumpe el flujo de la aplicación para poder depurar el código
+     * mediante Psysh (solo funciona con el webserver de PHP).
+     * @see https://psysh.org/
+     * @return string
+     */
+    function debug(): string
+    {
+        define('STDIN', fopen('php://stdin', 'r'));
+        return 'extract(\Psy\debug(get_defined_vars(), isset($this) ? $this : @get_called_class()));';
     }
 }
 
@@ -171,6 +185,20 @@ if (!function_exists('guest')) {
     function guest(): bool
     {
         return !session()->has(Authenticator::SESSION_AUTH);
+    }
+}
+
+if (!function_exists('currentUser')) {
+    /**
+     * Retorna el usuario logueado actualmente en la aplicación.
+     * @return \Note\Domain\User
+     */
+    function currentUser(): \Note\Domain\User
+    {
+        if (guest()) {
+            throw new \RuntimeException("No user is currently signed in!");
+        }
+        return unserialize(session()->get(Authenticator::SESSION_AUTH));
     }
 }
 

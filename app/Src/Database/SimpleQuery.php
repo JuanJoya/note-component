@@ -14,7 +14,7 @@ class SimpleQuery
     /**
      * @var array parámetros para el binding del query.
      */
-    public $bindParams = array();
+    private $bindParams = [];
 
     /**
      * Permite ejecutar sentencias INSERT, UPDATE, DELETE.
@@ -40,6 +40,17 @@ class SimpleQuery
         $result = $stm->fetchAll();
         $stm = null;
         return $result;
+    }
+
+    /**
+     * Vincula variables a parámetros de sustitución para preparar una sentencia SQL.
+     * @param array $params
+     * @return SimpleQuery
+     */
+    public function bindParams(array $params): self
+    {
+        $this->bindParams = $params;
+        return $this;
     }
 
     /**

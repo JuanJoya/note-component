@@ -23,10 +23,10 @@ use josegonzalez\Dotenv\Loader;
  * En producción se deben establecer variables de entorno 'reales' para evitar
  * la ejecución del Dotenv Parser en cada Request.
  */
-if (!getenv('APP_NAME')) {
+if (!getenv('APP_NAME') && file_exists(ROOT_PATH . '/.env')) {
     Loader::load([
         'filepath' => ROOT_PATH . '/.env',
-        'expect'   => array('APP_DEBUG'),
+        'expect'   => ['APP_DEBUG'],
         'toEnv'    => true,
         'toServer' => true,
         'putenv'   => true

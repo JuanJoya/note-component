@@ -7,6 +7,7 @@ namespace Note\Http\Controllers\Auth;
 use Illuminate\Http\Request;
 use Note\Src\Auth\Authenticator;
 use Sirius\Validation\Validator;
+use Tamtamchik\SimpleFlash\Flash;
 
 class AuthController
 {
@@ -28,7 +29,7 @@ class AuthController
         return view('auth.login');
     }
 
-    public function postLogin(Validator $validator, Request $request)
+    public function postLogin(Validator $validator, Request $request, Flash $flash)
     {
         $validator->add([
             'email:Email' => 'required | email',
@@ -37,6 +38,7 @@ class AuthController
 
         if ($validator->validate($request->all())) {
             if ($this->auth->login($request->email, $request->password)) {
+                $flash->message('Welcome back!');
                 return redirect()->route('home');
             }
             $validator->addMessage('Fail', 'These credentials do not match our records.');
@@ -54,30 +56,24 @@ class AuthController
         return redirect()->route('home');
     }
 
-    /**
-     * Show the application registration form.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function getRegister()
     {
         return view('auth.register');
     }
 
-    public function postRegister(Validator $validator, Request $request)
+    public function postRegister(Validator $validator, Request $request, Flash $flash)
     {
-        //add UNIQUE email rule
         $validator->add([
-            'email:Email' => 'required | email | minlength(8) | maxlength(50)',
+            'email:Email' =>
+            'required | email | minlength(8) | maxlength(50) | unique(users,email)',
             'password:Password' =>
-            "required | 
-             minlength(5) | 
-             maxlength(25) | 
+            "required | minlength(5) | maxlength(25) | 
              match(password_confirm)(The {label} confirmation doesn't match.)"
         ]);
 
         if ($validator->validate($request->all())) {
             if ($this->auth->register($request->only(['email', 'password']))) {
+                $flash->message('Registration successful!');
                 return redirect()->route('home');
             }
         }

@@ -13,7 +13,7 @@ use Twig\Loader\{FilesystemLoader, LoaderInterface};
 /**
  * El método 'bind' le indica al contenedor, el contrato y la implementación
  * esto permite añadir una interface como parámetro|dependencia.
- * @var \Illuminate\Container\Container $container.
+ * @var \Illuminate\Container\Container $container
  */
 $container->bind(TemplateEngine::class, Twig::class);
 

@@ -42,6 +42,11 @@ require dirname(__DIR__) . '/Router/router.php';
 require dirname(__DIR__) . '/Template/template.php';
 
 /**
+ * Configuración del sistema de validación.
+ */
+require dirname(__DIR__) . '/Validation/Factory.php';
+
+/**
  * Este método le indica al container que implementación debe utilizar.
  */
 $container->bind(Authenticator::class, BasicAuth::class);

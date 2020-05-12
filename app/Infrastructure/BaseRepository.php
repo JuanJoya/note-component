@@ -26,7 +26,7 @@ abstract class BaseRepository extends SimpleQuery
      */
     public function find($param, string $type = 'id')
     {
-        $this->bindParams = [":{$type}" => $param];
+        $this->bindParams([":{$type}" => $param]);
         $result = $this->getResultsFromQuery($this->findQuery($type));
         if (!empty($result)) {
             return (count($result) > 1)
@@ -42,7 +42,7 @@ abstract class BaseRepository extends SimpleQuery
      */
     public function limit(int $skip, int $max): Collection
     {
-        $this->bindParams = ['skip' => $skip, 'max' => $max];
+        $this->bindParams(['skip' => $skip, 'max' => $max]);
         return $this->mapToEntity(
             $this->getResultsFromQuery($this->allQuery() . " LIMIT :skip, :max")
         );
@@ -63,7 +63,7 @@ abstract class BaseRepository extends SimpleQuery
      */
     public function delete(int $id): bool
     {
-        $this->bindParams = [':id' => $id];
+        $this->bindParams([':id' => $id]);
         return $this->executeSingleQuery("DELETE FROM {$this->table()} WHERE id = :id") ? true : false;
     }
 

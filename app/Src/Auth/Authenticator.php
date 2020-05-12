@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Note\Src\Auth;
 
+use Note\Domain\User;
+
 interface Authenticator
 {
     /**
@@ -45,4 +47,10 @@ interface Authenticator
      * @return bool
      */
     public function guest(): bool;
+
+    /**
+     * Retorna el usuario logueado actualmente en la aplicación.
+     * @return User
+     */
+    public function user(): User;
 }

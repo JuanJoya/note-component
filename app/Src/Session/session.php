@@ -32,7 +32,7 @@ $session->has('_token') ?: $session->set('_token', Str::random(40));
 /**
  * Se agrega la instancia al contenedor de dependencias para compartir la misma sesión
  * por toda la aplicación.
- * @var \Illuminate\Container\Container $container.
+ * @var \Illuminate\Container\Container $container
  */
 $container->instance(SessionInterface::class, $session);
 

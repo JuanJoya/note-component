@@ -15,11 +15,11 @@ class NoteRepository extends BaseRepository
      */
     public function save(array $attributes): void
     {
-        $this->bindParams = [
+        $this->bindParams([
             ':title'     => $attributes['title'],
             ':content'   => $attributes['content'],
             ':author_id' => $attributes['author_id'],
-        ];
+        ]);
         $this->executeSingleQuery(
             "INSERT INTO notes (title, content, author_id)
              VALUES (:title, :content, :author_id)"
@@ -33,12 +33,12 @@ class NoteRepository extends BaseRepository
     public function update(array $attributes): void
     {
         $this->validateNote($attributes['id']);
-        $this->bindParams = [
+        $this->bindParams([
             ':title'      => $attributes['title'],
             ':content'    => $attributes['content'],
-            ':updated_at' => $attributes['updated_at'],
+            ':updated_at' => $attributes['updated_at'] ?? date('Y-m-d H:i:s'),
             ':id'         => $attributes['id'],
-        ];
+        ]);
         $this->executeSingleQuery(
             "UPDATE notes
              SET title = :title, content = :content, updated_at = :updated_at 
@@ -55,10 +55,10 @@ class NoteRepository extends BaseRepository
     public function search(string $query): Collection
     {
         $query = '%' . escapeLike($query) . '%';
-        $this->bindParams = [
+        $this->bindParams([
             ':content' => $query,
             ':title'   => $query
-        ];
+        ]);
         $result = $this->getResultsFromQuery(
             $this->selectQuery() .
             "WHERE n.content LIKE :content OR n.title LIKE :title
@@ -73,7 +73,7 @@ class NoteRepository extends BaseRepository
      */
     public function notes(int $author_id): Collection
     {
-        $this->bindParams = [':author_id' => $author_id];
+        $this->bindParams([':author_id' => $author_id]);
         $result = $this->getResultsFromQuery(
             $this->selectQuery() .
             "WHERE n.author_id = :author_id

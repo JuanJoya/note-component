@@ -16,11 +16,11 @@ class AuthorRepository extends BaseRepository
      */
     public function save(array $attributes): void
     {
-        $this->bindParams = [
+        $this->bindParams([
             ':user_id'  => $attributes['user_id'],
             ':username' => $attributes['username'],
             ':slug'     => $attributes['slug']
-        ];
+        ]);
         $this->executeSingleQuery(
             "INSERT INTO authors (user_id, username, slug) VALUES (:user_id, :username, :slug)"
         );
@@ -41,7 +41,7 @@ class AuthorRepository extends BaseRepository
      */
     public function authors(int $user_id): Collection
     {
-        $this->bindParams = [':user_id' => $user_id];
+        $this->bindParams([':user_id' => $user_id]);
         $result = $this->getResultsFromQuery(
             $this->selectQuery() . "WHERE a.user_id = :user_id"
         );

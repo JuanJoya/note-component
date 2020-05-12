@@ -16,7 +16,7 @@ $request = Request::capture();
 
 /**
  * Se agrega el objeto Session para obtenerlo con la instancia del Request.
- * @var Symfony\Component\HttpFoundation\Session\Session $session
+ * @var \Symfony\Component\HttpFoundation\Session\Session $session
  */
 $request->setSession($session);
 
