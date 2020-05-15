@@ -1,0 +1,39 @@
+{% extends "layout.twig" %}
+
+{% block title %}Create an Author{% endblock %}
+{% block content %}
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Create</li>
+        </ol>
+    </nav>
+    <div class="alert alert-light text-center mb-4" role="alert">
+        <h3 class="font-weight-light text-dark">Create an <span class="text-success">Author</span></h3>
+        <hr>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-lg-12">
+            {% if errors %}
+                {% include 'partials/errors.twig' %}
+            {% endif %}
+            <div class="alert alert-success" role="alert">
+                <strong>Please</strong> complete the form below.
+            </div>
+            <form action="{{ route('authors.store') }}" method="POST">
+                <div class="form-group">
+                    <label class="text-muted">Logged user</label>
+                    <input class="form-control" type="text" value="{{ user.fullName }}" readonly>
+                </div>
+                <div class="form-group">
+                    <p class="text-muted">Please type the following data:</p>
+                    <input type="text" name="username" class="form-control" maxlength="20" placeholder="Username" value="{{ old.username }}" required>
+                    <small class="form-text text-muted">Required, must be 5-20 characters long, only letters, numbers, dashes, underscores and spaces.</small>
+                </div>
+                <button type="submit" class="btn btn-success btn-block">Create</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

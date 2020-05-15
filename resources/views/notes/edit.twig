@@ -6,12 +6,12 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('notes.show', {'author': note.author.id}) }}">Update</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Note #{{ note.id }}</li>
+            <li class="breadcrumb-item"><a href="{{ route('notes.show', {'author': note.author.id}) }}">Notes</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Update</li>
         </ol>
     </nav>
     <div class="alert alert-light text-center mb-4" role="alert">
-        <h3 class="font-weight-light text-dark">Update a note</h3>
+        <h3 class="font-weight-light text-dark">Update a <span class="text-warning">Note</span></h3>
         <hr>
     </div>
     {# @var \Note\Domain\Note $note #}

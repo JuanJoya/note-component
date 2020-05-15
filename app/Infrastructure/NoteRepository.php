@@ -96,6 +96,8 @@ class NoteRepository extends BaseRepository
             $user,
             $result['username'],
             $result['slug'],
+            $result['a_created'],
+            $result['a_updated'],
             $result['author_id'],
         );
         return new Note(
@@ -138,7 +140,8 @@ class NoteRepository extends BaseRepository
      */
     private function selectQuery(): string
     {
-        return "SELECT n.*, a.username, a.slug, a.user_id, u.email
+        return "SELECT 
+                n.*, a.username, a.slug, a.user_id, a.created_at AS a_created, a.updated_at AS a_updated, u.email
                 FROM notes n
                 INNER JOIN authors a ON a.id = n.author_id
                 INNER JOIN users u ON u.id = a.user_id ";

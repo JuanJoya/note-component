@@ -10,16 +10,14 @@
         </ol>
     </nav>
     <div class="alert alert-light text-center mb-4" role="alert">
-        <h3 class="font-weight-light text-dark">Create a note</h3>
+        <h3 class="font-weight-light text-dark">Create a <span class="text-success">Note</span></h3>
         <hr>
     </div>
     {# @var \Illuminate\Support\Collection $authors #}
     {# @var \Note\Domain\Author $author #}
 
     {% if authors.isEmpty() %}
-    <div class="alert alert-warning" role="alert">
-        <strong>Oops! </strong> <span class="text-info">{{ user.fullName }}</span> does not have any author.
-    </div>
+        {% include 'notes/partials/empty.authors.twig' %}
     {% else %}
     <div class="row justify-content-md-center">
         <div class="col-lg-12">

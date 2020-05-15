@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Note\Domain;
 
+use Note\Domain\Traits\Timestamps;
+
 class Author
 {
+    use Timestamps;
+
     /**
      * @var User usuario creador del autor.
      */
@@ -29,13 +33,24 @@ class Author
     /**
      * @param User $user
      * @param string $username
+     * @param string $slug
+     * @param string $created_at
+     * @param string $updated_at
      * @param int $id
      */
-    public function __construct(User $user, string $username, string $slug, int $id)
-    {
+    public function __construct(
+        User $user,
+        string $username,
+        string $slug,
+        string $created_at,
+        string $updated_at,
+        int $id
+    ) {
         $this->user = $user;
         $this->username = $username;
         $this->slug = $slug;
+        $this->created_at = $created_at;
+        $this->updated_at = $updated_at;
         $this->id = $id;
     }
 

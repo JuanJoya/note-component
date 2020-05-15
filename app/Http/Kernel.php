@@ -19,9 +19,10 @@ class Kernel extends HttpKernel
     public function getRouteMiddleware(): array
     {
         return [
-            'auth'  => \Note\Http\Middleware\Authenticate::class,
+            'auth' => \Note\Http\Middleware\Authenticate::class,
             'guest' => \Note\Http\Middleware\RedirectIfAuthenticated::class,
-            'csrf'  => \Note\Src\Middleware\VerifyCsrfToken::class
+            'csrf' => \Note\Src\Middleware\VerifyCsrfToken::class,
+            'authors.limit' => \Note\Http\Middleware\AuthorsLimit::class
         ];
     }
 

@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Note\Domain;
 
+use Note\Domain\Traits\Timestamps;
+
 class Note
 {
+    use Timestamps;
+    
     /**
      * @var Author
      */
@@ -20,16 +24,6 @@ class Note
      * @var string
      */
     private $content;
-
-    /**
-     * @var string
-     */
-    private $created_at;
-
-    /**
-     * @var string
-     */
-    private $updated_at;
 
     /**
      * @var int
@@ -106,31 +100,6 @@ class Note
     public function getAuthor(): Author
     {
         return $this->author;
-    }
-
-    /**
-     * @return string
-     */
-    public function getCreatedAt(): string
-    {
-        return $this->created_at;
-    }
-
-    /**
-     * @param string $timestamp
-     * @return void
-     */
-    public function setUpdatedAt(string $timestamp): void
-    {
-        $this->updated_at = $timestamp;
-    }
-
-    /**
-     * @return string
-     */
-    public function getUpdatedAt(): string
-    {
-        return $this->updated_at;
     }
 
     /**

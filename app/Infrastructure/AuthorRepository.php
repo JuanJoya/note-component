@@ -17,12 +17,12 @@ class AuthorRepository extends BaseRepository
     public function save(array $attributes): void
     {
         $this->bindParams([
-            ':user_id'  => $attributes['user_id'],
             ':username' => $attributes['username'],
-            ':slug'     => $attributes['slug']
+            ':slug'     => $attributes['slug'],
+            ':user_id'  => $attributes['user_id']
         ]);
         $this->executeSingleQuery(
-            "INSERT INTO authors (user_id, username, slug) VALUES (:user_id, :username, :slug)"
+            "INSERT INTO authors (username, slug, user_id) VALUES (:username, :slug, :user_id)"
         );
     }
 
@@ -32,7 +32,17 @@ class AuthorRepository extends BaseRepository
      */
     public function update(array $attributes): void
     {
-        //TODO
+        $this->bindParams([
+            ':username'   => $attributes['username'],
+            ':slug'       => $attributes['slug'],
+            ':updated_at' => $attributes['updated_at'] ?? date('Y-m-d H:i:s'),
+            ':id'         => $attributes['id'],
+        ]);
+        $this->executeSingleQuery(
+            "UPDATE authors
+             SET username = :username, slug = :slug, updated_at = :updated_at 
+             WHERE id = :id"
+        );
     }
 
     /**
@@ -62,6 +72,8 @@ class AuthorRepository extends BaseRepository
             $user,
             $result['username'],
             $result['slug'],
+            $result['created_at'],
+            $result['updated_at'],
             $result['id']
         );
     }

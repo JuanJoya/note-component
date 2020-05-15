@@ -2,11 +2,12 @@
 
 namespace Note\Http\Controllers;
 
+use ArrayAccess;
 use Note\Src\Response\View;
+use Illuminate\Http\Request;
 use Note\Src\Template\TemplateEngine;
 use Note\Domain\Services\Note\NoteService;
 use Note\Domain\Services\Author\AuthorService;
-use Illuminate\Http\Request;
 
 class HomeController extends BaseController
 {
@@ -30,6 +31,9 @@ class HomeController extends BaseController
     {
         $author = $authors->find($slug, 'slug', true);
         $notes = $this->notes->find($author->getId(), 'author_id');
+        if (! $notes instanceof ArrayAccess) {
+            return redirect()->route('home');
+        }
         return $view->make('index.home', ['notes' => $this->paginate($notes, 10)]);
     }
 

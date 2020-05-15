@@ -6,9 +6,10 @@
  */
 
 use Illuminate\Routing\Router;
-use Note\Http\Controllers\Auth\AuthController;
 use Note\Http\Controllers\HomeController;
+use Note\Http\Controllers\Auth\AuthController;
 use Note\Http\Controllers\Registered\NotesController;
+use Note\Http\Controllers\Registered\AuthorsController;
 
 //Guest
 $router->get('/', HomeController::class . '@index')->name('home');
@@ -37,8 +38,14 @@ $router->group(['prefix' => 'notes', 'middleware' => 'auth'], function (Router $
     $router->delete('{note}', NotesController::class . '@destroy')->name('notes.destroy');
 });
 
-$router->group(['prefix' => 'users'], function (Router $router) {
-    $router->get('/', function () {
-        return 'users';
-    });
+$router->group(['prefix' => 'authors', 'middleware' => 'auth'], function (Router $router) {
+    $router->pattern('author', '0*[1-9][0-9]*');
+    $router->get('/', AuthorsController::class . '@index')->name('authors.index');
+    $router->get('create', AuthorsController::class . '@create')
+        ->name('authors.create')
+        ->middleware('authors.limit');
+    $router->post('/', AuthorsController::class . '@store')->name('authors.store');
+    $router->get('{author}/edit', AuthorsController::class . '@edit')->name('authors.edit');
+    $router->put('{author}', AuthorsController::class . '@update')->name('authors.update');
+    $router->delete('{author}', AuthorsController::class . '@destroy')->name('authors.destroy');
 });

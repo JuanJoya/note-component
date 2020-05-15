@@ -202,6 +202,17 @@ if (!function_exists('currentUser')) {
     }
 }
 
+if (!function_exists('currentId')) {
+    /**
+     * Retorna el Id del usuario logueado actualmente en la aplicación.
+     * @return int
+     */
+    function currentId(): int
+    {
+        return currentUser()->getId();
+    }
+}
+
 if (!function_exists('request')) {
     /**
      * Retorna instancia del objeto Request.

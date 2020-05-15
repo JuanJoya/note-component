@@ -53,6 +53,13 @@ interface AuthorService
     public function create(array $attributes);
 
     /**
+     * Permite actualizar una author en los registros de la aplicación.
+     * @param array $attributes
+     * @return void
+     */
+    public function update(array $attributes): void;
+
+    /**
      * Permite eliminar un autor del sistema.
      * @param int $id
      * @return bool estado de la petición.
