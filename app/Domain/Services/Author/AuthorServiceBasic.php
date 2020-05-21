@@ -27,11 +27,12 @@ class AuthorServiceBasic extends BaseService implements AuthorService
 
     /**
      * @param int $user_id
+     * @param bool $plain
      * @return Collection
      */
-    public function userAuthors(int $user_id): Collection
+    public function byUser(int $user_id, bool $plain = false): Collection
     {
-        return $this->repository()->authors($user_id);
+        return $this->repository()->authors($user_id, $plain);
     }
 
     /**

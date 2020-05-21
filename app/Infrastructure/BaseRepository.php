@@ -14,7 +14,7 @@ abstract class BaseRepository extends SimpleQuery
      */
     public function all(): Collection
     {
-        return $this->mapToEntity(
+        return $this->makeCollection(
             $this->getResultsFromQuery($this->allQuery())
         );
     }
@@ -30,7 +30,7 @@ abstract class BaseRepository extends SimpleQuery
         $result = $this->getResultsFromQuery($this->findQuery($type));
         if (!empty($result)) {
             return (count($result) > 1)
-            ? $this->mapToEntity($result)
+            ? $this->makeCollection($result)
             : $this->mapEntity(array_shift($result));
         }
     }
@@ -43,7 +43,7 @@ abstract class BaseRepository extends SimpleQuery
     public function limit(int $skip, int $max): Collection
     {
         $this->bindParams(['skip' => $skip, 'max' => $max]);
-        return $this->mapToEntity(
+        return $this->makeCollection(
             $this->getResultsFromQuery($this->allQuery() . " LIMIT :skip, :max")
         );
     }
@@ -77,15 +77,19 @@ abstract class BaseRepository extends SimpleQuery
     }
 
     /**
-     * @param array $results ResultSet de la base de datos.
+     * @param array $items ResultSet de la base de datos.
+     * @param bool $plain crear Collection sin modelar las entidades.
      * @return Collection
      */
-    protected function mapToEntity(array $results): Collection
+    protected function makeCollection(array $items, bool $plain = false): Collection
     {
         $collection = Collection::make();
-        foreach ($results as $result) {
+        if ($plain) {
+            return $collection->merge($items);
+        }
+        foreach ($items as $item) {
             $collection->push(
-                $this->mapEntity($result)
+                $this->mapEntity($item)
             );
         }
         return $collection;

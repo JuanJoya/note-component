@@ -42,16 +42,16 @@ class Author
         User $user,
         string $username,
         string $slug,
-        string $created_at,
-        string $updated_at,
-        int $id
+        int $id,
+        string $created_at = null,
+        string $updated_at = null
     ) {
         $this->user = $user;
         $this->username = $username;
         $this->slug = $slug;
+        $this->id = $id;
         $this->created_at = $created_at;
         $this->updated_at = $updated_at;
-        $this->id = $id;
     }
 
     /**

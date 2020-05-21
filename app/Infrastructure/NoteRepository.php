@@ -41,7 +41,7 @@ class NoteRepository extends BaseRepository
         ]);
         $this->executeSingleQuery(
             "UPDATE notes
-             SET title = :title, content = :content, updated_at = :updated_at 
+             SET title = :title, content = :content, updated_at = :updated_at
              WHERE id = :id"
         );
     }
@@ -64,7 +64,7 @@ class NoteRepository extends BaseRepository
             "WHERE n.content LIKE :content OR n.title LIKE :title
              ORDER BY n.updated_at DESC"
         );
-        return $this->mapToEntity($result);
+        return $this->makeCollection($result);
     }
 
     /**
@@ -79,7 +79,7 @@ class NoteRepository extends BaseRepository
             "WHERE n.author_id = :author_id
              ORDER BY n.updated_at DESC"
         );
-        return $this->mapToEntity($result);
+        return $this->makeCollection($result);
     }
 
     /**
@@ -96,17 +96,15 @@ class NoteRepository extends BaseRepository
             $user,
             $result['username'],
             $result['slug'],
-            $result['a_created'],
-            $result['a_updated'],
             $result['author_id'],
         );
         return new Note(
             $author,
             $result['title'],
             $result['content'],
+            $result['id'],
             $result['created_at'],
-            $result['updated_at'],
-            $result['id']
+            $result['updated_at']
         );
     }
 
@@ -140,8 +138,8 @@ class NoteRepository extends BaseRepository
      */
     private function selectQuery(): string
     {
-        return "SELECT 
-                n.*, a.username, a.slug, a.user_id, a.created_at AS a_created, a.updated_at AS a_updated, u.email
+        return "SELECT
+                n.*, a.username, a.slug, a.user_id, u.email
                 FROM notes n
                 INNER JOIN authors a ON a.id = n.author_id
                 INNER JOIN users u ON u.id = a.user_id ";

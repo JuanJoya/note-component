@@ -16,11 +16,12 @@ class UserRepository extends BaseRepository
     {
         $this->bindParams([
             ':email'    => $attributes['email'],
-            ':password' => password_hash($attributes['password'], PASSWORD_DEFAULT)
+            ':password' => password_hash($attributes['password'], PASSWORD_DEFAULT),
+            ':avatar'   => $attributes['avatar']
         ]);
         $this->executeSingleQuery(
-            "INSERT INTO users (email, password)
-             VALUES (:email, :password)"
+            "INSERT INTO users (email, password, avatar)
+             VALUES (:email, :password, :avatar)"
         );
     }
     
@@ -42,7 +43,8 @@ class UserRepository extends BaseRepository
         return new User(
             $result['email'],
             $result['id'],
-            $result['password']
+            $result['password'],
+            $result['avatar']
         );
     }
 

@@ -22,6 +22,7 @@ class TwigExtension extends AbstractExtension
             new Func('route', 'route'),
             new Func('flash', 'simpleFlash'),
             new Func('guest', 'guest'),
+            new Func('auth', 'currentUser'),
             new Func('csrf_field', 'csrf_field')
         ];
     }

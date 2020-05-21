@@ -37,7 +37,7 @@ class NotesController extends BaseController
 
     public function create(array $errors = null, array $old = null)
     {
-        $authors = $this->authors->userAuthors(currentId());
+        $authors = $this->authors->byUser(currentId());
         return $this->view->make('notes.create', [
             'user'    => currentUser(),
             'authors' => $authors,
@@ -64,7 +64,9 @@ class NotesController extends BaseController
 
     public function find()
     {
-        $authors = $this->authors->userAuthors(currentId());
+        $authors = $this->authors->byUser(currentId(), true)->map(
+            $this->mergeAuthorNotes()
+        );
         return $this->view->make('notes.find', [
             'user' => currentUser(),
             'authors' => $authors
@@ -114,5 +116,14 @@ class NotesController extends BaseController
             ]);
         }
         return $redirect->route('home');
+    }
+
+    private function mergeAuthorNotes(): \Closure
+    {
+        return function ($author) {
+            return array_merge($author, [
+                'notes' => $this->notes->authorNotes($author['id'])->count()
+            ]);
+        };
     }
 }

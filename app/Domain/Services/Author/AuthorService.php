@@ -69,9 +69,10 @@ interface AuthorService
     /**
      * Retorna los autores de un usuario especifico.
      * @param int $user_id
+     * @param bool plain modela los autores como un array.
      * @return Collection
      */
-    public function userAuthors(int $user_id): Collection;
+    public function byUser(int $user_id, bool $plain = false): Collection;
 
     /**
      * Verifica la existencia de un autor y su correspondiente

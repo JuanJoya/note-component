@@ -40,22 +40,23 @@ class AuthorRepository extends BaseRepository
         ]);
         $this->executeSingleQuery(
             "UPDATE authors
-             SET username = :username, slug = :slug, updated_at = :updated_at 
+             SET username = :username, slug = :slug, updated_at = :updated_at
              WHERE id = :id"
         );
     }
 
     /**
-     * @param int $userId
+     * @param integer $user_id
+     * @param boolean $plain
      * @return Collection
      */
-    public function authors(int $user_id): Collection
+    public function authors(int $user_id, $plain = false): Collection
     {
         $this->bindParams([':user_id' => $user_id]);
         $result = $this->getResultsFromQuery(
             $this->selectQuery() . "WHERE a.user_id = :user_id"
         );
-        return $this->mapToEntity($result);
+        return $this->makeCollection($result, $plain);
     }
 
     /**
@@ -72,9 +73,9 @@ class AuthorRepository extends BaseRepository
             $user,
             $result['username'],
             $result['slug'],
+            $result['id'],
             $result['created_at'],
-            $result['updated_at'],
-            $result['id']
+            $result['updated_at']
         );
     }
 

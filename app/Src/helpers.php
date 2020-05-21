@@ -261,7 +261,7 @@ if (!function_exists('view')) {
      * Compila un template y retorna instancia del objeto Response.
      * @param string $template nombre del template.
      * @param array $params parámetros a enviar al template.
-     * @param integer $status código de status http.
+     * @param int $status código de status http.
      * @return \Illuminate\Http\Response
      */
     function view(string $template, array $params = [], int $status = 200): \Illuminate\Http\Response
@@ -286,7 +286,7 @@ if (!function_exists('redirect')) {
 if (!function_exists('abort')) {
     /**
      * Lanza una excepción del tipo HttpException.
-     * @param integer $statusCode código de estado http.
+     * @param int $statusCode código de estado http.
      * @param string $msg mensaje de estado http.
      * @param array $headers cabecera http.
      * @return void

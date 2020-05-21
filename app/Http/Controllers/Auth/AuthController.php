@@ -16,9 +16,6 @@ class AuthController
      */
     private $auth;
 
-    /**
-     * @param Authenticator $auth
-     */
     public function __construct(Authenticator $auth)
     {
         $this->auth = $auth;
@@ -67,12 +64,18 @@ class AuthController
             'email:Email' =>
             'required | email | minlength(8) | maxlength(50) | unique(users,email)',
             'password:Password' =>
-            "required | minlength(5) | maxlength(25) | 
-             match(password_confirm)(The {label} confirmation doesn't match.)"
+            'required | minlength(5) | maxlength(25) | 
+             match(password_confirm)(The {label} confirmation does not match.)',
+            'avatar:Avatar' => 'image(allowed=jpeg,png) | size(100K)'
         ]);
 
         if ($validator->validate($request->all())) {
-            if ($this->auth->register($request->only(['email', 'password']))) {
+            $data = [
+                'email' => $request->email,
+                'password' => $request->password,
+                'avatar' => $this->resolveImage($request, 'avatar')
+            ];
+            if ($this->auth->register($data)) {
                 $flash->message('Registration successful!');
                 return redirect()->route('home');
             }
@@ -82,5 +85,19 @@ class AuthController
             'errors' => $validator->getMessages(),
             'email'  => $request->email
         ]);
+    }
+
+    /**
+     * @param Request $request
+     * @param string $image
+     * @return string|null
+     */
+    private function resolveImage(Request $request, string $image = null): ?string
+    {
+        if ($request->file($image)) {
+            $file_name = $request->file($image)->hashName();
+            $request->file($image)->move('static/img', $file_name);
+        }
+        return $file_name ?? null;
     }
 }

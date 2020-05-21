@@ -42,16 +42,16 @@ class Note
         Author $author,
         string $title,
         string $content,
-        string $created_at,
-        string $updated_at,
-        int $id
+        int $id,
+        string $created_at = null,
+        string $updated_at = null
     ) {
         $this->author = $author;
         $this->title = $title;
         $this->content = $content;
+        $this->id = $id;
         $this->created_at = $created_at;
         $this->updated_at = $updated_at;
-        $this->id = $id;
     }
 
     /**

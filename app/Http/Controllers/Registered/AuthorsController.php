@@ -31,7 +31,7 @@ class AuthorsController extends BaseController
 
     public function index()
     {
-        $authors = $this->authors->userAuthors(currentId());
+        $authors = $this->authors->byUser(currentId());
         return $this->view->make('authors.index', [
             'user' => currentUser(),
             'authors' => $authors

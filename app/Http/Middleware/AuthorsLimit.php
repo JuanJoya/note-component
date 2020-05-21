@@ -59,7 +59,7 @@ class AuthorsLimit
      */
     public function handle(Request $request, Closure $next)
     {
-        $authors = $this->author->userAuthors(
+        $authors = $this->author->byUser(
             $this->auth->user()->getId()
         );
         if ($authors->count() >= self::AMOUNT) {

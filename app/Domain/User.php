@@ -17,20 +17,27 @@ class User
     private $password;
 
     /**
+     * @var string
+     */
+    private $avatar;
+
+    /**
      * @var int
      */
     private $id;
 
     /**
      * @param string $email
-     * @param string $pass
      * @param int $id
+     * @param string $password
+     * @param string $avatar
      */
-    public function __construct(string $email, int $id, string $password = null)
+    public function __construct(string $email, int $id, string $password = null, string $avatar = null)
     {
         $this->email = $email;
         $this->id = $id;
         $this->password = $password;
+        $this->avatar = $avatar;
     }
 
     /**
@@ -94,11 +101,23 @@ class User
     }
 
     /**
+     * Nombre del fichero.
+     * @return string
+     */
+    public function getAvatar(): string
+    {
+        if (!$this->avatar) {
+            return "default-avatar.jpg";
+        }
+        return $this->avatar;
+    }
+
+    /**
      * Propiedades del objeto a serializar.
      * @return array
      */
     public function __sleep(): array
     {
-        return ['email', 'id'];
+        return ['email', 'id', 'avatar'];
     }
 }

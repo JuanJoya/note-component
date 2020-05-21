@@ -18,7 +18,7 @@
             {% if errors %}
                 {% include 'partials/errors.twig' %}
             {% endif %}
-            <form method="POST" class="mt-4 mb-5">
+            <form method="POST" enctype="multipart/form-data" class="mt-4 mb-5">
                 <div class="form-group">
                     <label for="email" class="text-muted">Email</label>
                     <input type="email" class="form-control" maxlength="50" name="email" id="email" value="{{ email }}" required>
@@ -34,9 +34,23 @@
                     <input type="password" class="form-control" name="password_confirm" id="password_confirm" required>
                     <small class="form-text text-muted">Required.</small>
                 </div>
+                <div class="text-muted mb-2">Avatar</div>
+                <div class="custom-file mb-5">
+                    <input type="file" class="custom-file-input" id="avatar" name="avatar" accept="image/png, image/jpeg, image/jpg">
+                    <label class="custom-file-label" for="avatar">Choose file...</label>
+                    <small class="form-text text-muted">Must be a valid image file, size under 100k.</small>
+                  </div>
                 <input class="btn btn-primary btn-block" type="submit" value="Register">
             </form>
         </div>
     </div>
 </div>
+{% endblock %}
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js" integrity="sha256-e0DUqNhsFAzOlhrWXnMOQwRoqrCRlofpWgyhnrIIaPo=" crossorigin="anonymous"></script>
+<script>
+$(document).ready(function () {
+    bsCustomFileInput.init()
+})  
+</script>
 {% endblock %}
